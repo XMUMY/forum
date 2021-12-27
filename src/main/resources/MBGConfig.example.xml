@@ -1,0 +1,19 @@
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="dsql" targetRuntime="MyBatis3DynamicSql">
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="jdbc:postgresql://host:port/db?user=user&amp;password=passwd"/>
+
+        <javaModelGenerator targetPackage="com.flyingblu.community.model" targetProject="src/main/java"/>
+
+        <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"/>
+
+        <table schema="community" tableName="community"/>
+        <table schema="community" tableName="member"/>
+        <table schema="community" tableName="moderate"/>
+        <table schema="community" tableName="post"/>
+        <table schema="community" tableName="reply"/>
+    </context>
+</generatorConfiguration>
