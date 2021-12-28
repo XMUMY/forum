@@ -7,22 +7,22 @@ import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public final class MemberDynamicSqlSupport {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.member")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source Table: community.member")
     public static final Member member = new Member();
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.member.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source field: community.member.id")
     public static final SqlColumn<Integer> id = member.id;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.member.uid")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source field: community.member.uid")
     public static final SqlColumn<String> uid = member.uid;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.member.community_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source field: community.member.community_id")
     public static final SqlColumn<Integer> communityId = member.communityId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.member.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source field: community.member.create_time")
     public static final SqlColumn<Date> createTime = member.createTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.member")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.1967595+08:00", comments="Source Table: community.member")
     public static final class Member extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 

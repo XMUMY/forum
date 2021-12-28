@@ -3,6 +3,9 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <context id="dsql" targetRuntime="MyBatis3DynamicSql">
+        <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+
         <jdbcConnection driverClass="org.postgresql.Driver"
                         connectionURL="jdbc:postgresql://host:port/db?user=user&amp;password=passwd"/>
 
@@ -11,19 +14,25 @@
         <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"/>
 
         <table schema="community" tableName="community">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.community', 'id'));" identity="true"/>
+            <generatedKey column="id"
+                          sqlStatement="SELECT currval(pg_get_serial_sequence('community.community', 'id'));"
+                          identity="true"/>
         </table>
         <table schema="community" tableName="member">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.member', 'id'));" identity="true"/>
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.member', 'id'));"
+                          identity="true"/>
         </table>
         <table schema="community" tableName="moderate">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.moderate', 'id'));" identity="true"/>
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.moderate', 'id'));"
+                          identity="true"/>
         </table>
         <table schema="community" tableName="post">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.post', 'id'));" identity="true"/>
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.post', 'id'));"
+                          identity="true"/>
         </table>
         <table schema="community" tableName="reply">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.reply', 'id'));" identity="true"/>
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.reply', 'id'));"
+                          identity="true"/>
         </table>
     </context>
 </generatorConfiguration>

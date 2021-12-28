@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-// options for Java generated sources
-//option java_multiple_files = true;
 option java_package = "com.flyingblu.community.dto";
 option java_outer_classname = "PostGrpcApi";
 
+import "google/protobuf/empty.proto";
+import "user.proto";
 package flyingblu.community;
 
 message CreatePostReq {
@@ -18,6 +18,30 @@ message CreatePostResp {
   int32 postId = 1;
 }
 
+message RemovePostReq {
+  string token = 1;
+  int32 postId = 2;
+}
+
+message GetPostReq {
+  string token = 1;
+  int32 postId = 2;
+}
+
+message PostDetails {
+  int32 id = 1;
+  string title = 2;
+  string body = 3;
+  int32 vote = 4;
+  string createTime = 5;
+  UserBrief user = 6;
+  int32 communityId = 7;
+  bool topped = 8;
+  bool best = 9;
+}
+
 service PostService {
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
+  rpc RemovePost(RemovePostReq) returns (google.protobuf.Empty);
+  rpc GetPost(GetPostReq) returns (PostDetails);
 }
