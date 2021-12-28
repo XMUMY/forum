@@ -7,25 +7,25 @@ import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public final class ModerateDynamicSqlSupport {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     public static final Moderate moderate = new Moderate();
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.moderate.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.moderate.id")
     public static final SqlColumn<Integer> id = moderate.id;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.moderate.uid")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.moderate.uid")
     public static final SqlColumn<String> uid = moderate.uid;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.moderate.community_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.moderate.community_id")
     public static final SqlColumn<Integer> communityId = moderate.communityId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.moderate.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.moderate.create_time")
     public static final SqlColumn<Date> createTime = moderate.createTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.moderate.delete_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source field: community.moderate.delete_time")
     public static final SqlColumn<Date> deleteTime = moderate.deleteTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     public static final class Moderate extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 

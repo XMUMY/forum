@@ -1,17 +1,16 @@
 package com.flyingblu.community.controller;
 
+import com.flyingblu.community.dto.PostGrpcApi;
+import com.flyingblu.community.dto.PostServiceGrpc;
 import com.flyingblu.community.model.Post;
 import com.flyingblu.community.service.PostService;
+import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+@GrpcService
+public class PostController extends PostServiceGrpc.PostServiceImplBase {
 
-@RestController
-@RequestMapping("post")
-public class PostController {
     private final PostService postService;
 
     @Autowired
@@ -19,25 +18,17 @@ public class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("insert")
-    public String insert() {
+
+    @Override
+    public void createPost(PostGrpcApi.CreatePostReq request,
+                           StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
         Post post = new Post();
-        post.setBody("Hello world!");
-        post.setTitle("Anybody?");
-        post.setCommunityId(1);
-        postService.insert(post);
-        return post.getId().toString();
-    }
-
-    @GetMapping("get")
-    public Post get() {
-        Post post = postService.getById(1);
-        System.out.println(post);
-        return post;
-    }
-
-    @GetMapping("get-all")
-    public List<Post> getAll() {
-        return postService.getAll();
+        post.setTitle(request.getTitle());
+        post.setBody(request.getBody());
+        post.setCommunityId(request.getCommunityId());
+        postService.create(post);
+        var resp = PostGrpcApi.CreatePostResp.newBuilder().setPostId(post.getId()).build();
+        responseObserver.onNext(resp);
+        responseObserver.onCompleted();
     }
 }

@@ -33,28 +33,28 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface ModerateMapper {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     BasicColumn[] selectList = BasicColumn.columnList(id, uid, communityId, createTime, deleteTime);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     @SelectKey(statement="SELECT currval(pg_get_serial_sequence('community.moderate', 'id'));", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<Moderate> insertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("ModerateResult")
     Optional<Moderate> selectOne(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="ModerateResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
@@ -65,28 +65,28 @@ public interface ModerateMapper {
     })
     List<Moderate> selectMany(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
     int update(UpdateStatementProvider updateStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     default long count(CountDSLCompleter completer) {
         return MyBatis3Utils.countFrom(this::count, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     default int delete(DeleteDSLCompleter completer) {
         return MyBatis3Utils.deleteFrom(this::delete, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     default int deleteByPrimaryKey(Integer id_) {
         return delete(c -> 
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     default int insert(Moderate record) {
         return MyBatis3Utils.insert(this::insert, record, moderate, c ->
             c.map(uid).toProperty("uid")
@@ -96,7 +96,7 @@ public interface ModerateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1929742+08:00", comments="Source Table: community.moderate")
     default int insertSelective(Moderate record) {
         return MyBatis3Utils.insert(this::insert, record, moderate, c ->
             c.map(uid).toPropertyWhenPresent("uid", record::getUid)
@@ -106,34 +106,34 @@ public interface ModerateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default Optional<Moderate> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default List<Moderate> select(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectList(this::selectMany, selectList, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default List<Moderate> selectDistinct(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectDistinct(this::selectMany, selectList, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default Optional<Moderate> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default int update(UpdateDSLCompleter completer) {
         return MyBatis3Utils.update(this::update, moderate, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     static UpdateDSL<UpdateModel> updateAllColumns(Moderate record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(uid).equalTo(record::getUid)
                 .set(communityId).equalTo(record::getCommunityId)
@@ -141,7 +141,7 @@ public interface ModerateMapper {
                 .set(deleteTime).equalTo(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Moderate record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(uid).equalToWhenPresent(record::getUid)
                 .set(communityId).equalToWhenPresent(record::getCommunityId)
@@ -149,7 +149,7 @@ public interface ModerateMapper {
                 .set(deleteTime).equalToWhenPresent(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default int updateByPrimaryKey(Moderate record) {
         return update(c ->
             c.set(uid).equalTo(record::getUid)
@@ -160,7 +160,7 @@ public interface ModerateMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.moderate")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1979796+08:00", comments="Source Table: community.moderate")
     default int updateByPrimaryKeySelective(Moderate record) {
         return update(c ->
             c.set(uid).equalToWhenPresent(record::getUid)

@@ -33,28 +33,28 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface CommunityMapper {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1828766+08:00", comments="Source Table: community.community")
     BasicColumn[] selectList = BasicColumn.columnList(id, title, description, createTime, deleteTime);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7699718+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1728375+08:00", comments="Source Table: community.community")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7699718+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7699718+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     @SelectKey(statement="SELECT currval(pg_get_serial_sequence('community.community', 'id'));", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<Community> insertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("CommunityResult")
     Optional<Community> selectOne(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="CommunityResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
@@ -65,28 +65,28 @@ public interface CommunityMapper {
     })
     List<Community> selectMany(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
     int update(UpdateStatementProvider updateStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     default long count(CountDSLCompleter completer) {
         return MyBatis3Utils.countFrom(this::count, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     default int delete(DeleteDSLCompleter completer) {
         return MyBatis3Utils.deleteFrom(this::delete, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     default int deleteByPrimaryKey(Integer id_) {
         return delete(c -> 
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1768653+08:00", comments="Source Table: community.community")
     default int insert(Community record) {
         return MyBatis3Utils.insert(this::insert, record, community, c ->
             c.map(title).toProperty("title")
@@ -96,7 +96,7 @@ public interface CommunityMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1828766+08:00", comments="Source Table: community.community")
     default int insertSelective(Community record) {
         return MyBatis3Utils.insert(this::insert, record, community, c ->
             c.map(title).toPropertyWhenPresent("title", record::getTitle)
@@ -106,34 +106,34 @@ public interface CommunityMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1828766+08:00", comments="Source Table: community.community")
     default Optional<Community> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default List<Community> select(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectList(this::selectMany, selectList, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default List<Community> selectDistinct(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectDistinct(this::selectMany, selectList, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default Optional<Community> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default int update(UpdateDSLCompleter completer) {
         return MyBatis3Utils.update(this::update, community, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     static UpdateDSL<UpdateModel> updateAllColumns(Community record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(title).equalTo(record::getTitle)
                 .set(description).equalTo(record::getDescription)
@@ -141,7 +141,7 @@ public interface CommunityMapper {
                 .set(deleteTime).equalTo(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Community record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(title).equalToWhenPresent(record::getTitle)
                 .set(description).equalToWhenPresent(record::getDescription)
@@ -149,7 +149,7 @@ public interface CommunityMapper {
                 .set(deleteTime).equalToWhenPresent(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default int updateByPrimaryKey(Community record) {
         return update(c ->
             c.set(title).equalTo(record::getTitle)
@@ -160,7 +160,7 @@ public interface CommunityMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.7850806+08:00", comments="Source Table: community.community")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T18:18:31.1879026+08:00", comments="Source Table: community.community")
     default int updateByPrimaryKeySelective(Community record) {
         return update(c ->
             c.set(title).equalToWhenPresent(record::getTitle)

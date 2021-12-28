@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package flyingblu.community;
+
+option java_package = "com.flyingblu.community.dto";
+
+
+enum ErrorReason {
+  UNKNOWN = 0;
+  INVALID_CREDENTIAL = 1;
+}

@@ -16,16 +16,19 @@ public class PostService {
     public PostService(PostMapper postMapper) {
         this.postMapper = postMapper;
     }
-    public boolean insert(Post post) {
+
+    public boolean create(Post post) {
         int insert = postMapper.insert(post);
         return insert == 1;
     }
+
     public Post getById(int id) {
         Optional<Post> post = postMapper.selectByPrimaryKey(id);
         if (post.isEmpty())
             return null;
         return post.get();
     }
+
     public List<Post> getAll() {
         return postMapper.select(c -> c);
     }
