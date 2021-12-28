@@ -10,10 +10,20 @@
 
         <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"/>
 
-        <table schema="community" tableName="community"/>
-        <table schema="community" tableName="member"/>
-        <table schema="community" tableName="moderate"/>
-        <table schema="community" tableName="post"/>
-        <table schema="community" tableName="reply"/>
+        <table schema="community" tableName="community">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.community', 'id'));" identity="true"/>
+        </table>
+        <table schema="community" tableName="member">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.member', 'id'));" identity="true"/>
+        </table>
+        <table schema="community" tableName="moderate">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.moderate', 'id'));" identity="true"/>
+        </table>
+        <table schema="community" tableName="post">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.post', 'id'));" identity="true"/>
+        </table>
+        <table schema="community" tableName="reply">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.reply', 'id'));" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

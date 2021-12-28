@@ -7,40 +7,40 @@ import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public final class PostDynamicSqlSupport {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source Table: community.post")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.post")
     public static final Post post = new Post();
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.id")
     public static final SqlColumn<Integer> id = post.id;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.uid")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.uid")
     public static final SqlColumn<String> uid = post.uid;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.create_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.create_time")
     public static final SqlColumn<Date> createTime = post.createTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.title")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.title")
     public static final SqlColumn<String> title = post.title;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.body")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.body")
     public static final SqlColumn<String> body = post.body;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source field: community.post.vote")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.vote")
     public static final SqlColumn<Integer> vote = post.vote;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6928682+08:00", comments="Source field: community.post.community_id")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.community_id")
     public static final SqlColumn<Integer> communityId = post.communityId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6928682+08:00", comments="Source field: community.post.topped")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.topped")
     public static final SqlColumn<Boolean> topped = post.topped;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6928682+08:00", comments="Source field: community.post.best")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.best")
     public static final SqlColumn<Boolean> best = post.best;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6928682+08:00", comments="Source field: community.post.delete_time")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source field: community.post.delete_time")
     public static final SqlColumn<Date> deleteTime = post.deleteTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-27T16:19:13.6828025+08:00", comments="Source Table: community.post")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T14:23:04.801191+08:00", comments="Source Table: community.post")
     public static final class Post extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 

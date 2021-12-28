@@ -1,0 +1,8 @@
+server:
+  port: 8888
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: passwd
+    url: jdbc:postgresql://host:port/db?user=user&amp;password=passwd
