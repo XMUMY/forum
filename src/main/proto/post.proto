@@ -8,10 +8,9 @@ import "user.proto";
 package flyingblu.community;
 
 message CreatePostReq {
-  string token = 1;
-  string title = 2;
-  string body = 3;
-  int32 communityId = 4;
+  string title = 1;
+  string body = 2;
+  int32 communityId = 3;
 }
 
 message CreatePostResp {
@@ -19,13 +18,11 @@ message CreatePostResp {
 }
 
 message RemovePostReq {
-  string token = 1;
-  int32 postId = 2;
+  int32 postId = 1;
 }
 
 message GetPostReq {
-  string token = 1;
-  int32 postId = 2;
+  int32 postId = 1;
 }
 
 message PostDetails {

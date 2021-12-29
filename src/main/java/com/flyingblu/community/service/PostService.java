@@ -2,16 +2,11 @@ package com.flyingblu.community.service;
 
 import com.flyingblu.community.mapper.PostMapper;
 import com.flyingblu.community.model.Post;
-import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
-import org.mybatis.dynamic.sql.select.SelectModel;
-import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 @Service
 public class PostService {

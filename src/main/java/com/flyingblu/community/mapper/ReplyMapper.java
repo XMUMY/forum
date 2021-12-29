@@ -33,28 +33,28 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
 public interface ReplyMapper {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     BasicColumn[] selectList = BasicColumn.columnList(id, content, createTime, uid, vote, refPostId, refReplyId, topped, deleteTime);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     @SelectKey(statement="SELECT currval(pg_get_serial_sequence('community.reply', 'id'));", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<Reply> insertStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("ReplyResult")
     Optional<Reply> selectOne(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="ReplyResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
@@ -69,28 +69,28 @@ public interface ReplyMapper {
     })
     List<Reply> selectMany(SelectStatementProvider selectStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.714187+08:00", comments="Source Table: community.reply")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
     int update(UpdateStatementProvider updateStatement);
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default long count(CountDSLCompleter completer) {
         return MyBatis3Utils.countFrom(this::count, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int delete(DeleteDSLCompleter completer) {
         return MyBatis3Utils.deleteFrom(this::delete, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int deleteByPrimaryKey(Integer id_) {
         return delete(c -> 
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2057046+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int insert(Reply record) {
         return MyBatis3Utils.insert(this::insert, record, reply, c ->
             c.map(content).toProperty("content")
@@ -104,7 +104,7 @@ public interface ReplyMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int insertSelective(Reply record) {
         return MyBatis3Utils.insert(this::insert, record, reply, c ->
             c.map(content).toPropertyWhenPresent("content", record::getContent)
@@ -118,34 +118,34 @@ public interface ReplyMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default Optional<Reply> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default List<Reply> select(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectList(this::selectMany, selectList, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default List<Reply> selectDistinct(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectDistinct(this::selectMany, selectList, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default Optional<Reply> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int update(UpdateDSLCompleter completer) {
         return MyBatis3Utils.update(this::update, reply, completer);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     static UpdateDSL<UpdateModel> updateAllColumns(Reply record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(content).equalTo(record::getContent)
                 .set(createTime).equalTo(record::getCreateTime)
@@ -157,7 +157,7 @@ public interface ReplyMapper {
                 .set(deleteTime).equalTo(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(Reply record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(content).equalToWhenPresent(record::getContent)
                 .set(createTime).equalToWhenPresent(record::getCreateTime)
@@ -169,7 +169,7 @@ public interface ReplyMapper {
                 .set(deleteTime).equalToWhenPresent(record::getDeleteTime);
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int updateByPrimaryKey(Reply record) {
         return update(c ->
             c.set(content).equalTo(record::getContent)
@@ -184,7 +184,7 @@ public interface ReplyMapper {
         );
     }
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-28T20:45:56.2157678+08:00", comments="Source Table: community.reply")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2021-12-29T13:35:57.7151859+08:00", comments="Source Table: community.reply")
     default int updateByPrimaryKeySelective(Reply record) {
         return update(c ->
             c.set(content).equalToWhenPresent(record::getContent)
