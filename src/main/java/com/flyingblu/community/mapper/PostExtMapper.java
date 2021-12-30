@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface PostExtMapper {
     List<Post> selectWithLimitOffset(@Param("limit") int limit, @Param("offset") int offset);
+    int setDeleteTimeToNow(@Param("id") int id);
+    int setUpdateTimeToNow(@Param("id") int id);
 }

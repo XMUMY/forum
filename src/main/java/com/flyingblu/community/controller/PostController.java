@@ -31,12 +31,14 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
     public void createPost(PostGrpcApi.CreatePostReq request,
                            StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
+        Date nowTime = new Date();
         Post post = new Post()
                 .withTitle(request.getTitle())
                 .withBody(request.getBody())
                 .withCommunityId(request.getCommunityId())
                 .withUid(uid)
-                .withCreateTime(new Date())
+                .withCreateTime(nowTime)
+                .withUpdateTime(nowTime)
                 .withVote(0)
                 .withBest(false)
                 .withTopped(false);
@@ -73,8 +75,9 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
             return;
         }
 
+        // Soft delete
         try {
-            if (!postService.removeById(request.getPostId()))
+            if (!postService.softRemove(request.getPostId()))
                 throw new Exception("postService.removeById returned false");
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,14 +91,16 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
 
     @Override
     public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        List<Post> posts = postService.get(0, 5);
+        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize());
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         posts.forEach(post -> {
             respBuilder.addPd(PostGrpcApi.PostDetails.newBuilder()
                     .setId(post.getId())
                     .setCreateTime(Timestamp.newBuilder()
-                            .setSeconds(post.getCreateTime().getTime() / 1000).build())
+                            .setSeconds(post.getCreateTime().getTime() / 1000))
+                    .setUpdateTime(Timestamp.newBuilder()
+                            .setSeconds(post.getUpdateTime().getTime() / 1000))
                     .setBest(post.getBest())
                     .setVote(post.getVote())
                     .setCommunityId(post.getCommunityId())

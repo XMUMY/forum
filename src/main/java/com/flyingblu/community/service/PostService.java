@@ -34,7 +34,11 @@ public class PostService {
         return postExtMapper.selectWithLimitOffset(numPerPage, offset);
     }
 
-    public boolean removeById(int id) {
-        return postMapper.deleteByPrimaryKey(id) == 1;
+    public boolean softRemove(int id) {
+        return postExtMapper.setDeleteTimeToNow(id) == 1;
+    }
+
+    public boolean renewUpdateTime(int id) {
+        return postExtMapper.setUpdateTimeToNow(id) == 1;
     }
 }

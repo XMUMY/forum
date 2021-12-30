@@ -22,7 +22,8 @@ message RemovePostReq {
 }
 
 message GetPostReq {
-  int32 postId = 1;
+  int32 pageNo = 1;
+  int32 pageSize = 2;
 }
 
 message GetPostResp {
@@ -35,6 +36,7 @@ message PostDetails {
   string body = 3;
   int32 vote = 4;
   google.protobuf.Timestamp createTime = 5;
+  google.protobuf.Timestamp updateTime = 10;
   string uid = 6;
   int32 communityId = 7;
   bool topped = 8;
