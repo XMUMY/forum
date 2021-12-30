@@ -91,7 +91,10 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
 
     @Override
     public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize());
+        List<Integer> communityIdsList = request.getCommunityIdsList();
+        if (communityIdsList.size() == 0)
+            communityIdsList = null;
+        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize(), communityIdsList);
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         posts.forEach(post -> {

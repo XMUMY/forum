@@ -24,6 +24,7 @@ message RemovePostReq {
 message GetPostReq {
   int32 pageNo = 1;
   int32 pageSize = 2;
+  repeated int32 communityIds = 3;
 }
 
 message GetPostResp {
