@@ -2,16 +2,22 @@
         "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-    <context id="dsql" targetRuntime="MyBatis3DynamicSql">
+    <context id="dsql" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"/>
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
         <jdbcConnection driverClass="org.postgresql.Driver"
                         connectionURL="jdbc:postgresql://host:port/db?user=user&amp;password=passwd"/>
 
         <javaModelGenerator targetPackage="com.flyingblu.community.model" targetProject="src/main/java"/>
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"
+                             type="XMLMAPPER"/>
 
-        <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"/>
 
         <table schema="community" tableName="community">
             <generatedKey column="id"

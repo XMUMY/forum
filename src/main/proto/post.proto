@@ -4,7 +4,7 @@ option java_package = "com.flyingblu.community.dto";
 option java_outer_classname = "PostGrpcApi";
 
 import "google/protobuf/empty.proto";
-import "user.proto";
+import "google/protobuf/timestamp.proto";
 package flyingblu.community;
 
 message CreatePostReq {
@@ -25,13 +25,17 @@ message GetPostReq {
   int32 postId = 1;
 }
 
+message GetPostResp {
+  repeated PostDetails pd = 1;
+}
+
 message PostDetails {
   int32 id = 1;
   string title = 2;
   string body = 3;
   int32 vote = 4;
-  string createTime = 5;
-  UserBrief user = 6;
+  google.protobuf.Timestamp createTime = 5;
+  string uid = 6;
   int32 communityId = 7;
   bool topped = 8;
   bool best = 9;
@@ -40,5 +44,5 @@ message PostDetails {
 service PostService {
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
   rpc RemovePost(RemovePostReq) returns (google.protobuf.Empty);
-  rpc GetPost(GetPostReq) returns (PostDetails);
+  rpc GetPost(GetPostReq) returns (GetPostResp);
 }

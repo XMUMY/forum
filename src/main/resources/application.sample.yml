@@ -1,8 +1,13 @@
 server:
   port: 8888
+grpc:
+  server:
+    port: 9999
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: passwd
     url: jdbc:postgresql://host:port/db?user=user&amp;password=passwd
+  profiles:
+    active: dev

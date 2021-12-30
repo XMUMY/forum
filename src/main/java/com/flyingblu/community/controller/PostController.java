@@ -6,10 +6,14 @@ import com.flyingblu.community.interceptor.AuthInterceptor;
 import com.flyingblu.community.model.Post;
 import com.flyingblu.community.service.PostService;
 import com.google.protobuf.Empty;
+import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+import java.util.List;
 
 @GrpcService
 public class PostController extends PostServiceGrpc.PostServiceImplBase {
@@ -31,7 +35,11 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
                 .withTitle(request.getTitle())
                 .withBody(request.getBody())
                 .withCommunityId(request.getCommunityId())
-                .withUid(uid);
+                .withUid(uid)
+                .withCreateTime(new Date())
+                .withVote(0)
+                .withBest(false)
+                .withTopped(false);
         try {
             if (!postService.create(post))
                 throw new Exception("postService.create returned false");
@@ -79,8 +87,25 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
     }
 
     @Override
-    public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
-        Post post = postService.getById(request.getPostId());
-        // TODO: JOIN
+    public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
+        List<Post> posts = postService.get(0, 5);
+        // ASK: is there better way to avoid copying?
+        PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
+        posts.forEach(post -> {
+            respBuilder.addPd(PostGrpcApi.PostDetails.newBuilder()
+                    .setId(post.getId())
+                    .setCreateTime(Timestamp.newBuilder()
+                            .setSeconds(post.getCreateTime().getTime() / 1000).build())
+                    .setBest(post.getBest())
+                    .setVote(post.getVote())
+                    .setCommunityId(post.getCommunityId())
+                    .setTopped(post.getTopped())
+                    .setTitle(post.getTitle())
+                    .setBody(post.getBody())
+                    .setUid(post.getUid()));
+        });
+
+        responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
     }
 }
