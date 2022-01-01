@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_package = "com.flyingblu.community.dto";
+option java_outer_classname = "CommunityGrpcApi";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+package flyingblu.community;
+
+message CreateCommunityReq {
+  string title = 1;
+  string description = 2;
+}
+
+message CreateCommunityResp {
+  int32 communityId = 1;
+}
+
+message CommunityIdMsg {
+  int32 communityId = 1;
+}
+
+message MembershipMsg {
+  int32 communityId = 1;
+  string uid = 2;
+}
+
+message GetCommunitiesReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+}
+
+message GetCommunitiesResp {
+  repeated Community communities = 1;
+}
+
+message Community {
+  int32 id = 1;
+  string creatorUid = 2;
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp createTime = 5;
+}
+
+service CommunityService {
+  rpc CreateCommunity(CreateCommunityReq) returns (CreateCommunityResp);
+  rpc RemoveCommunity(CommunityIdMsg) returns (google.protobuf.Empty);
+  rpc JoinCommunity(MembershipMsg) returns (google.protobuf.Empty);
+  rpc LeaveCommunity(MembershipMsg) returns (google.protobuf.Empty);
+  rpc GetCommunities(GetCommunitiesReq) returns (GetCommunitiesResp);
+}

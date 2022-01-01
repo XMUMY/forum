@@ -57,13 +57,13 @@
 
     <update id="toggleBest">
         update community.post
-        set best = !best
+        set best = not best
         where id = #{id}
     </update>
 
     <update id="toggleTop">
         update community.post
-        set top = !top
+        set top = not top
         where id = #{id}
     </update>
 </mapper>

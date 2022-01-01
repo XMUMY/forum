@@ -78,7 +78,7 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
         // Soft delete
         try {
             if (!postService.softRemove(request.getPostId()))
-                throw new Exception("postService.removeById returned false");
+                throw new Exception("postService.softRemove returned false");
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
