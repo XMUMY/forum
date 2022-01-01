@@ -58,7 +58,7 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
     }
 
     @Override
-    public void removePost(PostGrpcApi.RemovePostReq request,
+    public void removePost(PostGrpcApi.UpdatePostReq request,
                            StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         Post post = postService.getById(request.getPostId());
@@ -114,6 +114,68 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
         });
 
         responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void upvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
+        try {
+            if (!postService.upvote(request.getPostId()))
+                throw new Exception("postService.upvote returned false");
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void downvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
+        try {
+            if (!postService.downvote(request.getPostId()))
+                throw new Exception("postService.downvote returned false");
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void toggleBestPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: implement privilege control
+        try {
+            if (!postService.toggleBest(request.getPostId()))
+                throw new Exception("postService.toggleBest returned false");
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void toggleTopPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: implement privilege control
+        try {
+            if (!postService.toggleTop(request.getPostId()))
+                throw new Exception("postService.toggleTop returned false");
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
+        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }

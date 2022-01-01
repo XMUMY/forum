@@ -17,10 +17,6 @@ message CreatePostResp {
   int32 postId = 1;
 }
 
-message RemovePostReq {
-  int32 postId = 1;
-}
-
 message GetPostReq {
   int32 pageNo = 1;
   int32 pageSize = 2;
@@ -29,6 +25,10 @@ message GetPostReq {
 
 message GetPostResp {
   repeated PostDetails pd = 1;
+}
+
+message UpdatePostReq {
+  int32 postId = 1;
 }
 
 message PostDetails {
@@ -46,6 +46,10 @@ message PostDetails {
 
 service PostService {
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
-  rpc RemovePost(RemovePostReq) returns (google.protobuf.Empty);
+  rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc GetPost(GetPostReq) returns (GetPostResp);
+  rpc UpvotePost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc toggleTopPost(UpdatePostReq) returns (google.protobuf.Empty);
 }

@@ -2,13 +2,9 @@ package com.flyingblu.community.controller;
 
 import com.flyingblu.community.model.Community;
 import com.flyingblu.community.service.CommunityService;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("community")
 public class CommunityController {
     private final CommunityService communityService;
 
@@ -17,7 +13,6 @@ public class CommunityController {
         this.communityService = communityService;
     }
 
-    @GetMapping("insert")
     public String insert() {
         Community community = new Community();
         community.setTitle("New Com");

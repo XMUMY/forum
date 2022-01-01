@@ -15,4 +15,12 @@ public interface PostExtMapper {
     int setDeleteTimeToNow(@Param("id") int id);
 
     int setUpdateTimeToNow(@Param("id") int id);
+
+    int incVote(@Param("id") int id);
+
+    int decVote(@Param("id") int id);
+
+    int toggleBest(@Param("id") int id);
+
+    int toggleTop(@Param("id") int id);
 }

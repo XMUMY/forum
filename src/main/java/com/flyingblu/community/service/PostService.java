@@ -41,4 +41,20 @@ public class PostService {
     public boolean renewUpdateTime(int id) {
         return postExtMapper.setUpdateTimeToNow(id) == 1;
     }
+
+    public boolean upvote(int id) {
+        return postExtMapper.incVote(id) == 1;
+    }
+
+    public boolean downvote(int id) {
+        return postExtMapper.decVote(id) == 1;
+    }
+
+    public boolean toggleBest(int id) {
+        return postExtMapper.toggleBest(id) == 1;
+    }
+
+    public boolean toggleTop(int id) {
+        return postExtMapper.toggleTop(id) == 1;
+    }
 }

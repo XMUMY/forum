@@ -42,4 +42,28 @@
         set update_time = now()
         where id = #{id}
     </update>
+
+    <update id="incVote">
+        update community.post
+        set vote = vote + 1
+        where id = #{id}
+    </update>
+
+    <update id="decVote">
+        update community.post
+        set vote = vote - 1
+        where id = #{id}
+    </update>
+
+    <update id="toggleBest">
+        update community.post
+        set best = !best
+        where id = #{id}
+    </update>
+
+    <update id="toggleTop">
+        update community.post
+        set top = !top
+        where id = #{id}
+    </update>
 </mapper>
