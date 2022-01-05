@@ -11,33 +11,33 @@
         <jdbcConnection driverClass="org.postgresql.Driver"
                         connectionURL="jdbc:postgresql://host:port/db?user=user&amp;password=passwd"/>
 
-        <javaModelGenerator targetPackage="com.flyingblu.community.model" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="io.xdea.xmux.forum.model" targetProject="src/main/java"/>
         <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
-        <javaClientGenerator targetPackage="com.flyingblu.community.mapper" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="io.xdea.xmux.forum.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
 
-        <table schema="community" tableName="community">
+        <table schema="forum" tableName="community">
             <generatedKey column="id"
-                          sqlStatement="SELECT currval(pg_get_serial_sequence('community.community', 'id'));"
+                          sqlStatement="SELECT currval(pg_get_serial_sequence('forum.community', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="community" tableName="member">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.member', 'id'));"
+        <table schema="forum" tableName="member">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.member', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="community" tableName="moderate">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.moderate', 'id'));"
+        <table schema="forum" tableName="moderate">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.moderate', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="community" tableName="post">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.post', 'id'));"
+        <table schema="forum" tableName="post">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.post', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="community" tableName="reply">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('community.reply', 'id'));"
+        <table schema="forum" tableName="reply">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.reply', 'id'));"
                           identity="true"/>
         </table>
     </context>

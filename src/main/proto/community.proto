@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-option java_package = "com.flyingblu.community.dto";
+option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "CommunityGrpcApi";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-package flyingblu.community;
+package xdea.xmux.forum;
 
 message CreateCommunityReq {
   string title = 1;
