@@ -1,27 +1,24 @@
 package io.xdea.xmux.forum.controller;
 
 import io.xdea.xmux.forum.dto.PostGrpcApi;
-import io.xdea.xmux.forum.dto.PostServiceGrpc;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Post;
+import io.xdea.xmux.forum.service.GroupService;
 import io.xdea.xmux.forum.service.PostService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
 
-@GrpcService
-public class PostController extends PostServiceGrpc.PostServiceImplBase {
+public abstract class PostController extends GroupController {
 
     private final PostService postService;
 
-    @Autowired
-    public PostController(PostService postService) {
+    protected PostController(GroupService groupService, PostService postService) {
+        super(groupService);
         this.postService = postService;
     }
 

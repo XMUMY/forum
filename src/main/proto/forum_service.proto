@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "ForumGrpcApi";
+
+import "google/protobuf/empty.proto";
+import "group.proto";
+import "post.proto";
+package xdea.xmux.forum;
+
+service ForumService {
+  // Group
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
+  rpc RemoveGroup(GroupIdMsg) returns (google.protobuf.Empty);
+  rpc JoinGroup(MembershipMsg) returns (google.protobuf.Empty);
+  rpc LeaveGroup(MembershipMsg) returns (google.protobuf.Empty);
+  rpc GetGroups(GetGroupsReq) returns (GetGroupsResp);
+  // Post
+  rpc CreatePost(CreatePostReq) returns (CreatePostResp);
+  rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc GetPost(GetPostReq) returns (GetPostResp);
+  rpc UpvotePost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
+  rpc toggleTopPost(UpdatePostReq) returns (google.protobuf.Empty);
+}

@@ -41,11 +41,3 @@ message Group {
   string description = 4;
   google.protobuf.Timestamp createTime = 5;
 }
-
-service GroupService {
-  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
-  rpc RemoveGroup(GroupIdMsg) returns (google.protobuf.Empty);
-  rpc JoinGroup(MembershipMsg) returns (google.protobuf.Empty);
-  rpc LeaveGroup(MembershipMsg) returns (google.protobuf.Empty);
-  rpc GetGroups(GetGroupsReq) returns (GetGroupsResp);
-}

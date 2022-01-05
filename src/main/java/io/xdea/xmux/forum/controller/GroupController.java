@@ -1,7 +1,7 @@
 package io.xdea.xmux.forum.controller;
 
+import io.xdea.xmux.forum.dto.ForumServiceGrpc;
 import io.xdea.xmux.forum.dto.GroupGrpcApi;
-import io.xdea.xmux.forum.dto.GroupServiceGrpc;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Group;
 import io.xdea.xmux.forum.service.GroupService;
@@ -9,18 +9,14 @@ import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
 
-@GrpcService
-public class GroupController extends GroupServiceGrpc.GroupServiceImplBase {
+public abstract class GroupController extends ForumServiceGrpc.ForumServiceImplBase {
     private final GroupService groupService;
 
-    @Autowired
-    public GroupController(GroupService groupService) {
+    protected GroupController(GroupService groupService) {
         this.groupService = groupService;
     }
 

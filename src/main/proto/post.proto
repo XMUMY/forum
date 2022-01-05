@@ -43,13 +43,3 @@ message PostDetails {
   bool topped = 8;
   bool best = 9;
 }
-
-service PostService {
-  rpc CreatePost(CreatePostReq) returns (CreatePostResp);
-  rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc GetPost(GetPostReq) returns (GetPostResp);
-  rpc UpvotePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc toggleTopPost(UpdatePostReq) returns (google.protobuf.Empty);
-}
