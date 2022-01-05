@@ -1,6 +1,6 @@
 package io.xdea.xmux.forum.controller;
 
-import io.xdea.xmux.forum.dto.ForumServiceGrpc;
+import io.xdea.xmux.forum.dto.ForumGrpc;
 import io.xdea.xmux.forum.dto.GroupGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Group;
@@ -13,7 +13,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.Date;
 import java.util.List;
 
-public abstract class GroupController extends ForumServiceGrpc.ForumServiceImplBase {
+public abstract class GroupController extends ForumGrpc.ForumImplBase {
     private final GroupService groupService;
 
     protected GroupController(GroupService groupService) {

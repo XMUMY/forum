@@ -8,7 +8,7 @@ import "group.proto";
 import "post.proto";
 package xdea.xmux.forum;
 
-service ForumService {
+service Forum {
   // Group
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
   rpc RemoveGroup(GroupIdMsg) returns (google.protobuf.Empty);
