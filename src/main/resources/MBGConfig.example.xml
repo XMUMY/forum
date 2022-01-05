@@ -19,9 +19,9 @@
                              type="XMLMAPPER"/>
 
 
-        <table schema="forum" tableName="community">
+        <table schema="forum" tableName="group">
             <generatedKey column="id"
-                          sqlStatement="SELECT currval(pg_get_serial_sequence('forum.community', 'id'));"
+                          sqlStatement="SELECT currval(pg_get_serial_sequence('forum.group', 'id'));"
                           identity="true"/>
         </table>
         <table schema="forum" tableName="member">

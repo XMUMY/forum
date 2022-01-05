@@ -35,7 +35,7 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
         Post post = new Post()
                 .withTitle(request.getTitle())
                 .withBody(request.getBody())
-                .withCommunityId(request.getCommunityId())
+                .withGroupId(request.getGroupId())
                 .withUid(uid)
                 .withCreateTime(nowTime)
                 .withUpdateTime(nowTime)
@@ -91,10 +91,10 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
 
     @Override
     public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        List<Integer> communityIdsList = request.getCommunityIdsList();
-        if (communityIdsList.size() == 0)
-            communityIdsList = null;
-        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize(), communityIdsList);
+        List<Integer> groupIdsList = request.getGroupIdsList();
+        if (groupIdsList.size() == 0)
+            groupIdsList = null;
+        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList);
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         posts.forEach(post -> {
@@ -106,7 +106,7 @@ public class PostController extends PostServiceGrpc.PostServiceImplBase {
                             .setSeconds(post.getUpdateTime().getTime() / 1000))
                     .setBest(post.getBest())
                     .setVote(post.getVote())
-                    .setCommunityId(post.getCommunityId())
+                    .setGroupId(post.getGroupId())
                     .setTopped(post.getTopped())
                     .setTitle(post.getTitle())
                     .setBody(post.getBody())

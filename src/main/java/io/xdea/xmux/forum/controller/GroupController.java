@@ -1,10 +1,10 @@
 package io.xdea.xmux.forum.controller;
 
-import io.xdea.xmux.forum.dto.CommunityGrpcApi;
-import io.xdea.xmux.forum.dto.CommunityServiceGrpc;
+import io.xdea.xmux.forum.dto.GroupGrpcApi;
+import io.xdea.xmux.forum.dto.GroupServiceGrpc;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
-import io.xdea.xmux.forum.model.Community;
-import io.xdea.xmux.forum.service.CommunityService;
+import io.xdea.xmux.forum.model.Group;
+import io.xdea.xmux.forum.service.GroupService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
@@ -16,58 +16,58 @@ import java.util.Date;
 import java.util.List;
 
 @GrpcService
-public class CommunityController extends CommunityServiceGrpc.CommunityServiceImplBase {
-    private final CommunityService communityService;
+public class GroupController extends GroupServiceGrpc.GroupServiceImplBase {
+    private final GroupService groupService;
 
     @Autowired
-    public CommunityController(CommunityService communityService) {
-        this.communityService = communityService;
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Override
-    public void createCommunity(CommunityGrpcApi.CreateCommunityReq request, StreamObserver<CommunityGrpcApi.CreateCommunityResp> responseObserver) {
+    public void createGroup(GroupGrpcApi.CreateGroupReq request, StreamObserver<GroupGrpcApi.CreateGroupResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        Community community = new Community()
+        Group group = new Group()
                 .withCreateTime(new Date())
                 .withTitle(request.getTitle())
                 .withDescription(request.getDescription())
                 .withCreatorUid(uid);
         try {
-            if (!communityService.create(community))
-                throw new Exception("communityService.create returned false");
+            if (!groupService.create(group))
+                throw new Exception("groupService.create returned false");
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
         }
-        var resp = CommunityGrpcApi.CreateCommunityResp
-                .newBuilder().setCommunityId(community.getId()).build();
+        var resp = GroupGrpcApi.CreateGroupResp
+                .newBuilder().setGroupId(group.getId()).build();
         responseObserver.onNext(resp);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void removeCommunity(CommunityGrpcApi.CommunityIdMsg request, StreamObserver<Empty> responseObserver) {
+    public void removeGroup(GroupGrpcApi.GroupIdMsg request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        Community community = communityService.getById(request.getCommunityId());
+        Group group = groupService.getById(request.getGroupId());
         // Check if the user has privilege to remove the post
-        if (community == null) {
+        if (group == null) {
             responseObserver.onError(Status.INVALID_ARGUMENT
                     .withDescription("Commmunity does not exist").asException());
             return;
         }
-        String creatorUid = community.getCreatorUid();
+        String creatorUid = group.getCreatorUid();
         if (creatorUid == null || !creatorUid.equals(uid)) {
             responseObserver.onError(Status.PERMISSION_DENIED
-                    .withDescription("Not the creator of the community").asException());
+                    .withDescription("Not the creator of the group").asException());
             return;
         }
 
         // Soft delete
         try {
-            if (!communityService.softRemove(request.getCommunityId()))
-                throw new Exception("communityService.softRemove returned false");
+            if (!groupService.softRemove(request.getGroupId()))
+                throw new Exception("groupService.softRemove returned false");
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
@@ -79,11 +79,11 @@ public class CommunityController extends CommunityServiceGrpc.CommunityServiceIm
     }
 
     @Override
-    public void joinCommunity(CommunityGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
-        if (!communityService.checkMembershipExist(request.getUid(), request.getCommunityId())) {
+    public void joinGroup(GroupGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
+        if (!groupService.checkMembershipExist(request.getUid(), request.getGroupId())) {
             try {
-                if (!communityService.createMembership(request.getUid(), request.getCommunityId()))
-                    throw new Exception("communityService.createMembership returned false");
+                if (!groupService.createMembership(request.getUid(), request.getGroupId()))
+                    throw new Exception("groupService.createMembership returned false");
             } catch (Exception e) {
                 e.printStackTrace();
                 responseObserver.onError(Status.INTERNAL.withDescription("DB error").asException());
@@ -95,11 +95,11 @@ public class CommunityController extends CommunityServiceGrpc.CommunityServiceIm
     }
 
     @Override
-    public void leaveCommunity(CommunityGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
-        if (communityService.checkMembershipExist(request.getUid(), request.getCommunityId())) {
+    public void leaveGroup(GroupGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
+        if (groupService.checkMembershipExist(request.getUid(), request.getGroupId())) {
             try {
-                if (!communityService.removeMembership(request.getUid(), request.getCommunityId()))
-                    throw new Exception("communityService.removeMembership returned false");
+                if (!groupService.removeMembership(request.getUid(), request.getGroupId()))
+                    throw new Exception("groupService.removeMembership returned false");
             } catch (Exception e) {
                 e.printStackTrace();
                 responseObserver.onError(Status.INTERNAL.withDescription("DB error").asException());
@@ -111,18 +111,18 @@ public class CommunityController extends CommunityServiceGrpc.CommunityServiceIm
     }
 
     @Override
-    public void getCommunities(CommunityGrpcApi.GetCommunitiesReq request, StreamObserver<CommunityGrpcApi.GetCommunitiesResp> responseObserver) {
-        List<Community> communities = communityService.get(request.getPageNo(), request.getPageSize());
-        var builder = CommunityGrpcApi.GetCommunitiesResp.newBuilder();
-        communities.forEach(c -> {
-            var com = CommunityGrpcApi.Community.newBuilder()
+    public void getGroups(GroupGrpcApi.GetGroupsReq request, StreamObserver<GroupGrpcApi.GetGroupsResp> responseObserver) {
+        List<Group> groups = groupService.get(request.getPageNo(), request.getPageSize());
+        var builder = GroupGrpcApi.GetGroupsResp.newBuilder();
+        groups.forEach(c -> {
+            var com = GroupGrpcApi.Group.newBuilder()
                     .setId(c.getId())
                     .setCreateTime(Timestamp.newBuilder()
                             .setSeconds(c.getCreateTime().getTime() / 1000).build())
                     .setCreatorUid(c.getCreatorUid())
                     .setTitle(c.getTitle())
                     .setDescription(c.getDescription());
-            builder.addCommunities(com);
+            builder.addGroups(com);
         });
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();

@@ -10,7 +10,7 @@ package xdea.xmux.forum;
 message CreatePostReq {
   string title = 1;
   string body = 2;
-  int32 communityId = 3;
+  int32 groupId = 3;
 }
 
 message CreatePostResp {
@@ -20,7 +20,7 @@ message CreatePostResp {
 message GetPostReq {
   int32 pageNo = 1;
   int32 pageSize = 2;
-  repeated int32 communityIds = 3;
+  repeated int32 groupIds = 3;
 }
 
 message GetPostResp {
@@ -39,7 +39,7 @@ message PostDetails {
   google.protobuf.Timestamp createTime = 5;
   google.protobuf.Timestamp updateTime = 10;
   string uid = 6;
-  int32 communityId = 7;
+  int32 groupId = 7;
   bool topped = 8;
   bool best = 9;
 }

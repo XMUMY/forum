@@ -11,3 +11,5 @@ spring:
     url: jdbc:postgresql://host:port/db?user=user&amp;password=passwd
   profiles:
     active: dev
+mybatis:
+  mapper-locations: mapper/**/*.xml

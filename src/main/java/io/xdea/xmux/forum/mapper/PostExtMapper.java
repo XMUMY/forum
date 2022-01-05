@@ -10,7 +10,7 @@ import java.util.List;
 public interface PostExtMapper {
     List<Post> selectWithLimitOffset(@Param("limit") int limit,
                                      @Param("offset") int offset,
-                                     @Param("cId") List<Integer> communityIds);
+                                     @Param("cId") List<Integer> groupIds);
 
     int setDeleteTimeToNow(@Param("id") int id);
 

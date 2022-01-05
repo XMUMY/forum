@@ -29,9 +29,9 @@ public class PostService {
         return postMapper.selectByPrimaryKey(id);
     }
 
-    public List<Post> get(int page, int numPerPage, List<Integer> communityIds) {
+    public List<Post> get(int page, int numPerPage, List<Integer> groupIds) {
         int offset = page * numPerPage;
-        return postExtMapper.selectWithLimitOffset(numPerPage, offset, communityIds);
+        return postExtMapper.selectWithLimitOffset(numPerPage, offset, groupIds);
     }
 
     public boolean softRemove(int id) {

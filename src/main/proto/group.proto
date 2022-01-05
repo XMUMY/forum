@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "GroupGrpcApi";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+package xdea.xmux.forum;
+
+message CreateGroupReq {
+  string title = 1;
+  string description = 2;
+}
+
+message CreateGroupResp {
+  int32 groupId = 1;
+}
+
+message GroupIdMsg {
+  int32 groupId = 1;
+}
+
+message MembershipMsg {
+  int32 groupId = 1;
+  string uid = 2;
+}
+
+message GetGroupsReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+}
+
+message GetGroupsResp {
+  repeated Group groups = 1;
+}
+
+message Group {
+  int32 id = 1;
+  string creatorUid = 2;
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp createTime = 5;
+}
+
+service GroupService {
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
+  rpc RemoveGroup(GroupIdMsg) returns (google.protobuf.Empty);
+  rpc JoinGroup(MembershipMsg) returns (google.protobuf.Empty);
+  rpc LeaveGroup(MembershipMsg) returns (google.protobuf.Empty);
+  rpc GetGroups(GetGroupsReq) returns (GetGroupsResp);
+}

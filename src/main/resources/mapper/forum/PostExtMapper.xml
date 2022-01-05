@@ -13,7 +13,7 @@
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="body" jdbcType="VARCHAR" property="body"/>
         <result column="vote" jdbcType="INTEGER" property="vote"/>
-        <result column="community_id" jdbcType="INTEGER" property="communityId"/>
+        <result column="group_id" jdbcType="INTEGER" property="groupId"/>
         <result column="topped" jdbcType="BIT" property="topped"/>
         <result column="best" jdbcType="BIT" property="best"/>
         <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime"/>
@@ -23,7 +23,7 @@
     <select id="selectWithLimitOffset" resultMap="BaseResultMap">
         select * from forum.post where delete_time is null
         <if test="cId != null">
-            and community_id in
+            and group_id in
             <foreach collection="cId" item="acId" separator="," open="(" close=")">
                 #{acId}
             </foreach>
