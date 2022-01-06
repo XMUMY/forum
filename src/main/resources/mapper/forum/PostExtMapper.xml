@@ -20,8 +20,15 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
-    <select id="selectWithLimitOffset" resultMap="BaseResultMap">
-        select * from forum.post where delete_time is null
+    <resultMap id="PostWithGroupName" type="io.xdea.xmux.forum.model.PostWithGroupName" extends="BaseResultMap">
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+    </resultMap>
+
+    <select id="selectWithLimitOffset" resultMap="PostWithGroupName">
+        select p.id, uid, p.create_time, update_time, p.delete_time, p.title, body, vote, group_id, topped,
+        best, g.title group_name from forum.post p left join forum.group g on
+        p.group_id = g.id
+        where p.delete_time is null
         <if test="cId != null">
             and group_id in
             <foreach collection="cId" item="acId" separator="," open="(" close=")">

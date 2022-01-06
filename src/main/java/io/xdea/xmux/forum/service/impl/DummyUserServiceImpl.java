@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 public class DummyUserServiceImpl implements UserService {
     @Override
     public AuthResult auth(String token) {
-        if (token != null && token.equals("valid_token"))
-            return new AuthResult("developer", true);
+        if (token != null && !token.isEmpty()) {
+            System.out.printf("Dummy auth: token is '%s'\n", token);
+            return new AuthResult("cst1709364", true);
+        }
         return new AuthResult(null, false);
     }
 }

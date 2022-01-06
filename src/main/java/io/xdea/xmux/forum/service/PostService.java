@@ -3,6 +3,7 @@ package io.xdea.xmux.forum.service;
 import io.xdea.xmux.forum.mapper.PostExtMapper;
 import io.xdea.xmux.forum.mapper.PostMapper;
 import io.xdea.xmux.forum.model.Post;
+import io.xdea.xmux.forum.model.PostWithGroupName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class PostService {
         return postMapper.selectByPrimaryKey(id);
     }
 
-    public List<Post> get(int page, int numPerPage, List<Integer> groupIds) {
+    public List<PostWithGroupName> get(int page, int numPerPage, List<Integer> groupIds) {
         int offset = page * numPerPage;
         return postExtMapper.selectWithLimitOffset(numPerPage, offset, groupIds);
     }

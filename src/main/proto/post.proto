@@ -3,7 +3,6 @@ syntax = "proto3";
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "PostGrpcApi";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 package xdea.xmux.forum;
 
@@ -37,9 +36,10 @@ message PostDetails {
   string body = 3;
   int32 vote = 4;
   google.protobuf.Timestamp createTime = 5;
-  google.protobuf.Timestamp updateTime = 10;
   string uid = 6;
   int32 groupId = 7;
   bool topped = 8;
   bool best = 9;
+  google.protobuf.Timestamp updateTime = 10;
+  string groupName = 11;
 }

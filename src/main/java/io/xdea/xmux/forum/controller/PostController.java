@@ -91,7 +91,7 @@ public abstract class PostController extends GroupController {
         List<Integer> groupIdsList = request.getGroupIdsList();
         if (groupIdsList.size() == 0)
             groupIdsList = null;
-        List<Post> posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList);
+        var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList);
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         posts.forEach(post -> {
@@ -107,7 +107,8 @@ public abstract class PostController extends GroupController {
                     .setTopped(post.getTopped())
                     .setTitle(post.getTitle())
                     .setBody(post.getBody())
-                    .setUid(post.getUid()));
+                    .setUid(post.getUid())
+                    .setGroupName(post.getGroupName()));
         });
 
         responseObserver.onNext(respBuilder.build());

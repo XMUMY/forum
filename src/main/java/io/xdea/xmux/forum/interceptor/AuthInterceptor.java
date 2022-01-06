@@ -17,7 +17,7 @@ public class AuthInterceptor implements ServerInterceptor {
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> next) {
-        String token = metadata.get(Metadata.Key.of("token", Metadata.ASCII_STRING_MARSHALLER));
+        String token = metadata.get(Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER));
         var authResult = userService.auth(token);
         if (!authResult.success) {
             serverCall.close(Status.UNAUTHENTICATED, new Metadata());

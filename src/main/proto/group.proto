@@ -3,7 +3,6 @@ syntax = "proto3";
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "GroupGrpcApi";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 package xdea.xmux.forum;
 
