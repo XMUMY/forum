@@ -6,6 +6,7 @@ option java_outer_classname = "ForumGrpcApi";
 import "google/protobuf/empty.proto";
 import "group.proto";
 import "post.proto";
+import "reply.proto";
 package xdea.xmux.forum;
 
 service Forum {
@@ -23,4 +24,10 @@ service Forum {
   rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc toggleTopPost(UpdatePostReq) returns (google.protobuf.Empty);
+  // Reply
+  rpc CreateReply(CreateReplyReq) returns (CreateReplyResp);
+  rpc GetReply(GetReplyReq) returns (GetReplyResp);
+  rpc RemoveReply(UpdateReplyReq) returns (google.protobuf.Empty);
+  rpc UpvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
+  rpc DownvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
 }

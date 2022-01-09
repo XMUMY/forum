@@ -94,22 +94,22 @@ public abstract class PostController extends GroupController {
         var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList);
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
-        posts.forEach(post -> {
-            respBuilder.addPd(PostGrpcApi.PostDetails.newBuilder()
-                    .setId(post.getId())
-                    .setCreateTime(Timestamp.newBuilder()
-                            .setSeconds(post.getCreateTime().getTime() / 1000))
-                    .setUpdateTime(Timestamp.newBuilder()
-                            .setSeconds(post.getUpdateTime().getTime() / 1000))
-                    .setBest(post.getBest())
-                    .setVote(post.getVote())
-                    .setGroupId(post.getGroupId())
-                    .setTopped(post.getTopped())
-                    .setTitle(post.getTitle())
-                    .setBody(post.getBody())
-                    .setUid(post.getUid())
-                    .setGroupName(post.getGroupName()));
-        });
+        posts.forEach(post ->
+                respBuilder.addPd(PostGrpcApi.PostDetails.newBuilder()
+                        .setId(post.getId())
+                        .setCreateTime(Timestamp.newBuilder()
+                                .setSeconds(post.getCreateTime().getTime() / 1000))
+                        .setUpdateTime(Timestamp.newBuilder()
+                                .setSeconds(post.getUpdateTime().getTime() / 1000))
+                        .setBest(post.getBest())
+                        .setVote(post.getVote())
+                        .setGroupId(post.getGroupId())
+                        .setTopped(post.getTopped())
+                        .setTitle(post.getTitle())
+                        .setBody(post.getBody())
+                        .setUid(post.getUid())
+                        .setGroupName(post.getGroupName()))
+        );
 
         responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();

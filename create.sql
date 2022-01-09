@@ -36,17 +36,7 @@ CREATE TABLE IF NOT EXISTS forum.reply (
   ref_reply_id INT NOT NULL DEFAULT -1,
   topped BOOLEAN NULL DEFAULT FALSE,
   delete_time TIMESTAMP NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT fk_reply_post
-    FOREIGN KEY (ref_post_id)
-    REFERENCES forum.post (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_reply_reply1
-    FOREIGN KEY (ref_reply_id)
-    REFERENCES forum.reply (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+  PRIMARY KEY (id));
 
 CREATE TABLE IF NOT EXISTS forum.member (
   id SERIAL,

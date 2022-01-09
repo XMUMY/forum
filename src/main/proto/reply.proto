@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "ReplyGrpcApi";
+
+import "google/protobuf/timestamp.proto";
+package xdea.xmux.forum;
+
+enum RefType {
+  POST = 0;
+  REPLY = 1;
+}
+
+enum SortingMethod {
+  NEWEST = 0;
+  VOTE = 1;
+}
+
+message CreateReplyReq {
+  string content = 1;
+  RefType refType = 2;
+  int32 refId = 3;
+}
+
+message CreateReplyResp {
+  int32 replyId = 1;
+}
+
+message GetReplyReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+  RefType refType = 3;
+  int32 refId = 4;
+  SortingMethod sort = 5;
+}
+
+message GetReplyResp {
+  repeated Reply replies = 1;
+}
+
+message UpdateReplyReq {
+  int32 replyId = 1;
+}
+
+message Reply {
+  int32 id = 1;
+  string content = 2;
+  int32 vote = 3;
+  string uid = 4;
+  bool topped = 5;
+  google.protobuf.Timestamp createTime = 6;
+}
