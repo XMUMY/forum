@@ -16,6 +16,7 @@ service Forum {
   rpc JoinGroup(MembershipMsg) returns (google.protobuf.Empty);
   rpc LeaveGroup(MembershipMsg) returns (google.protobuf.Empty);
   rpc GetGroups(GetGroupsReq) returns (GetGroupsResp);
+  rpc GetUserGroups(google.protobuf.Empty) returns (GetUserGroupsResp);
   // Post
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
   rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);

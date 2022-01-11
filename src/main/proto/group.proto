@@ -21,7 +21,6 @@ message GroupIdMsg {
 
 message MembershipMsg {
   int32 groupId = 1;
-  string uid = 2;
 }
 
 message GetGroupsReq {
@@ -33,10 +32,19 @@ message GetGroupsResp {
   repeated Group groups = 1;
 }
 
+message GetUserGroupsResp {
+  repeated GroupBrief groups = 1;
+}
+
 message Group {
   int32 id = 1;
   string creatorUid = 2;
   string title = 3;
   string description = 4;
   google.protobuf.Timestamp createTime = 5;
+}
+
+message GroupBrief {
+  int32 id = 1;
+  string title = 2;
 }

@@ -4,11 +4,13 @@ import io.xdea.xmux.forum.mapper.GroupExtMapper;
 import io.xdea.xmux.forum.mapper.GroupMapper;
 import io.xdea.xmux.forum.mapper.MemberMapper;
 import io.xdea.xmux.forum.model.Group;
+import io.xdea.xmux.forum.model.GroupExample;
 import io.xdea.xmux.forum.model.Member;
 import io.xdea.xmux.forum.model.MemberExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +63,21 @@ public class GroupService {
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andUidEqualTo(uid).andGroupIdEqualTo(groupId);
         return memberMapper.deleteByExample(memberExample) == 1;
+    }
+
+    public List<Group> getMemberGroup(String uid) {
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andUidEqualTo(uid);
+        List<Integer> groupIds = new ArrayList<>();
+        memberMapper.selectByExample(memberExample).forEach(
+                member -> groupIds.add(member.getGroupId())
+        );
+        if (groupIds.size() == 0)
+            return new ArrayList<>();
+
+        GroupExample groupExample = new GroupExample();
+        groupExample.createCriteria().andIdIn(groupIds);
+        return groupMapper.selectByExample(groupExample);
     }
 
     public Group getById(int groupId) {

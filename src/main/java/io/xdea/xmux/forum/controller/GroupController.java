@@ -76,9 +76,11 @@ public abstract class GroupController extends ForumGrpc.ForumImplBase {
 
     @Override
     public void joinGroup(GroupGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
-        if (!groupService.checkMembershipExist(request.getUid(), request.getGroupId())) {
+        String uid = AuthInterceptor.UID.get();
+
+        if (!groupService.checkMembershipExist(uid, request.getGroupId())) {
             try {
-                if (!groupService.createMembership(request.getUid(), request.getGroupId()))
+                if (!groupService.createMembership(uid, request.getGroupId()))
                     throw new Exception("groupService.createMembership returned false");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,9 +94,10 @@ public abstract class GroupController extends ForumGrpc.ForumImplBase {
 
     @Override
     public void leaveGroup(GroupGrpcApi.MembershipMsg request, StreamObserver<Empty> responseObserver) {
-        if (groupService.checkMembershipExist(request.getUid(), request.getGroupId())) {
+        String uid = AuthInterceptor.UID.get();
+        if (groupService.checkMembershipExist(uid, request.getGroupId())) {
             try {
-                if (!groupService.removeMembership(request.getUid(), request.getGroupId()))
+                if (!groupService.removeMembership(uid, request.getGroupId()))
                     throw new Exception("groupService.removeMembership returned false");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -103,6 +106,27 @@ public abstract class GroupController extends ForumGrpc.ForumImplBase {
             }
         }
         responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserGroups(Empty request, StreamObserver<GroupGrpcApi.GetUserGroupsResp> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
+        var respBuilder = GroupGrpcApi.GetUserGroupsResp.newBuilder();
+        try {
+            groupService.getMemberGroup(uid).forEach(
+                    group -> respBuilder.addGroups(
+                            GroupGrpcApi.GroupBrief.newBuilder()
+                                    .setId(group.getId())
+                                    .setTitle(group.getTitle())
+                                    .build())
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL.withDescription("DB error").asException());
+            return;
+        }
+        responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();
     }
 
