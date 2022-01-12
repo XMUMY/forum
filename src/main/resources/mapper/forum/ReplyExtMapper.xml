@@ -33,12 +33,13 @@
                 and ref_reply_id = #{replyId}
             </when>
         </choose>
+        order by topped desc,
         <choose>
             <when test="orderByVote">
-                order by vote desc
+                vote desc
             </when>
             <otherwise>
-                order by create_time desc
+                create_time desc
             </otherwise>
         </choose>
         limit #{limit} offset #{offset}

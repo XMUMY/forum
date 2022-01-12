@@ -35,7 +35,7 @@
                 #{acId}
             </foreach>
         </if>
-        order by update_time desc limit #{limit} offset #{offset}
+        order by topped desc, update_time desc limit #{limit} offset #{offset}
     </select>
 
     <update id="setDeleteTimeToNow">
