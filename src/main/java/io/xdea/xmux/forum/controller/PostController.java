@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class PostController extends GroupController {
 
-    private final PostService postService;
+    protected final PostService postService;
 
     protected PostController(GroupService groupService, PostService postService) {
         super(groupService);

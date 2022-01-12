@@ -6,20 +6,16 @@ option java_outer_classname = "ReplyGrpcApi";
 import "google/protobuf/timestamp.proto";
 package xdea.xmux.forum;
 
-enum RefType {
-  POST = 0;
-  REPLY = 1;
-}
-
 enum SortingMethod {
   NEWEST = 0;
   VOTE = 1;
+  OLDEST = 2;
 }
 
 message CreateReplyReq {
   string content = 1;
-  RefType refType = 2;
-  int32 refId = 3;
+  int32 refReplyId = 3;
+  int32 refPostId = 4;
 }
 
 message CreateReplyResp {
@@ -29,9 +25,8 @@ message CreateReplyResp {
 message GetReplyReq {
   int32 pageNo = 1;
   int32 pageSize = 2;
-  RefType refType = 3;
-  int32 refId = 4;
-  SortingMethod sort = 5;
+  int32 refPostId = 3;
+  SortingMethod sort = 4;
 }
 
 message GetReplyResp {
@@ -49,4 +44,5 @@ message Reply {
   string uid = 4;
   bool topped = 5;
   google.protobuf.Timestamp createTime = 6;
+  int32 refReplyId = 7;
 }

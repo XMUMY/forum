@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class GroupController extends ForumGrpc.ForumImplBase {
-    private final GroupService groupService;
+    protected final GroupService groupService;
 
     protected GroupController(GroupService groupService) {
         this.groupService = groupService;

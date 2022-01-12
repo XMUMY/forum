@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class ReplyController extends PostController {
-    private final ReplyService replyService;
+    protected final ReplyService replyService;
 
     protected ReplyController(GroupService groupService, PostService postService, ReplyService replyService) {
         super(groupService, postService);
@@ -31,17 +31,14 @@ public abstract class ReplyController extends PostController {
                 .withUid(uid)
                 .withContent(request.getContent())
                 .withTopped(false)
-                .withVote(0);
-        if (request.getRefTypeValue() == 0) {
-            reply.withRefReplyId(-1)
-                    .withRefPostId(request.getRefId());
-        } else if (request.getRefTypeValue() == 1) {
-            reply.withRefReplyId(request.getRefId())
-                    .withRefPostId(-1);
-        }
+                .withVote(0)
+                .withRefReplyId(request.getRefReplyId())
+                .withRefPostId(request.getRefPostId());
         try {
             if (!replyService.create(reply))
                 throw new Exception("replyService.create returned false");
+            if (!postService.renewUpdateTime(request.getRefPostId()))
+                throw new Exception("postService.renewUpdateTime returned false");
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
@@ -56,14 +53,8 @@ public abstract class ReplyController extends PostController {
 
     @Override
     public void getReply(ReplyGrpcApi.GetReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
-        List<Reply> replies = new ArrayList<>();
-        if (request.getRefTypeValue() == 0) {
-            replies = replyService.get(request.getPageNo(), request.getPageSize(),
-                    request.getRefId(), null, request.getSortValue() == 1);
-        } else if (request.getRefTypeValue() == 1) {
-            replies = replyService.get(request.getPageNo(), request.getPageSize(),
-                    null, request.getRefId(), request.getSortValue() == 1);
-        }
+        var replies = replyService.get(request.getPageNo(), request.getPageSize(),
+                request.getRefPostId(), null, request.getSortValue() == 1);
         ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
         replies.forEach(reply ->
                 respBuilder.addReplies(ReplyGrpcApi.Reply.newBuilder()
