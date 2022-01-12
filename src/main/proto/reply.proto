@@ -45,4 +45,5 @@ message Reply {
   bool topped = 5;
   google.protobuf.Timestamp createTime = 6;
   int32 refReplyId = 7;
+  string refUid = 8;
 }

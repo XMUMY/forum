@@ -11,9 +11,7 @@ import io.xdea.xmux.forum.service.GroupService;
 import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ReplyService;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public abstract class ReplyController extends PostController {
     protected final ReplyService replyService;
@@ -34,6 +32,18 @@ public abstract class ReplyController extends PostController {
                 .withVote(0)
                 .withRefReplyId(request.getRefReplyId())
                 .withRefPostId(request.getRefPostId());
+
+        // Cache Reply UID for front-end display
+        if (reply.getRefReplyId() != -1) {
+            Reply refReply = replyService.getById(reply.getRefReplyId());
+            if (refReply == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            reply.setRefUid(refReply.getUid());
+        }
+
         try {
             if (!replyService.create(reply))
                 throw new Exception("replyService.create returned false");
@@ -64,7 +74,9 @@ public abstract class ReplyController extends PostController {
                         .setVote(reply.getVote())
                         .setTopped(reply.getTopped())
                         .setContent(reply.getContent())
-                        .setUid(reply.getUid()))
+                        .setUid(reply.getUid())
+                        .setRefReplyId(reply.getRefReplyId())
+                        .setRefUid(reply.getRefUid() == null ? "" : reply.getRefUid()))
         );
 
         responseObserver.onNext(respBuilder.build());

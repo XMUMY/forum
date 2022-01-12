@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS forum.reply (
   vote INT NULL,
   ref_post_id INT NOT NULL DEFAULT -1,
   ref_reply_id INT NOT NULL DEFAULT -1,
+  ref_uid TEXT NULL,
   topped BOOLEAN NULL DEFAULT FALSE,
   delete_time TIMESTAMP NULL,
   PRIMARY KEY (id));
