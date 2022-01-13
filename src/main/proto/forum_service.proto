@@ -28,6 +28,7 @@ service Forum {
   // Reply
   rpc CreateReply(CreateReplyReq) returns (CreateReplyResp);
   rpc GetReply(GetReplyReq) returns (GetReplyResp);
+  rpc GetReplyById(GetReplyByIdReq) returns (Reply);
   rpc RemoveReply(UpdateReplyReq) returns (google.protobuf.Empty);
   rpc UpvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
   rpc DownvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);

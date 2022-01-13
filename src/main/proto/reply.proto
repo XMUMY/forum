@@ -29,6 +29,10 @@ message GetReplyReq {
   SortingMethod sort = 4;
 }
 
+message GetReplyByIdReq {
+  int32 replyId = 1;
+}
+
 message GetReplyResp {
   repeated Reply replies = 1;
 }

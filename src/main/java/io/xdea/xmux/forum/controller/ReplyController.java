@@ -21,6 +21,19 @@ public abstract class ReplyController extends PostController {
         this.replyService = replyService;
     }
 
+    private ReplyGrpcApi.Reply buildReply(Reply reply) {
+        return ReplyGrpcApi.Reply.newBuilder()
+                .setId(reply.getId())
+                .setCreateTime(Timestamp.newBuilder()
+                        .setSeconds(reply.getCreateTime().getTime() / 1000))
+                .setVote(reply.getVote())
+                .setTopped(reply.getTopped())
+                .setContent(reply.getContent())
+                .setUid(reply.getUid())
+                .setRefReplyId(reply.getRefReplyId())
+                .setRefUid(reply.getRefUid() == null ? "" : reply.getRefUid()).build();
+    }
+
     @Override
     public void createReply(ReplyGrpcApi.CreateReplyReq request, StreamObserver<ReplyGrpcApi.CreateReplyResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
@@ -66,20 +79,21 @@ public abstract class ReplyController extends PostController {
         var replies = replyService.get(request.getPageNo(), request.getPageSize(),
                 request.getRefPostId(), null, request.getSortValue() == 1);
         ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
-        replies.forEach(reply ->
-                respBuilder.addReplies(ReplyGrpcApi.Reply.newBuilder()
-                        .setId(reply.getId())
-                        .setCreateTime(Timestamp.newBuilder()
-                                .setSeconds(reply.getCreateTime().getTime() / 1000))
-                        .setVote(reply.getVote())
-                        .setTopped(reply.getTopped())
-                        .setContent(reply.getContent())
-                        .setUid(reply.getUid())
-                        .setRefReplyId(reply.getRefReplyId())
-                        .setRefUid(reply.getRefUid() == null ? "" : reply.getRefUid()))
-        );
+        replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
 
         responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getReplyById(ReplyGrpcApi.GetReplyByIdReq request, StreamObserver<ReplyGrpcApi.Reply> responseObserver) {
+        Reply reply = replyService.getById(request.getReplyId());
+        if (reply == null) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Resource not exist").asException());
+            return;
+        }
+        responseObserver.onNext(buildReply(reply));
         responseObserver.onCompleted();
     }
 
