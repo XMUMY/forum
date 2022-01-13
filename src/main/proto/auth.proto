@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package xmux.core.auth.v4;
+
+import "google/api/annotations.proto";
+
+option go_package = "git.xdea.xyz/XMUS/auth/api/auth/v4;v4";
+
+service Auth {
+  // Authenticate user with credential.
+  rpc AuthUser (AuthUserReq) returns (AuthUserResp);
+}
+
+// Credential for authenticating user with campus ID and password.
+message CampusIdPasswordCredential {
+  string campusId = 1;
+  string password = 2;
+}
+
+message AuthUserReq {
+  oneof credential {
+    // Authenticate user with campus ID and password.
+    CampusIdPasswordCredential campusIdPassword = 1;
+
+    // Authenticate user with firebase ID token.
+    string firebaseIdToken = 2;
+  }
+}
+
+enum CampusRole {
+  none = 0;
+  student = 1;
+  teacher = 2;
+}
+
+message AuthUserResp {
+  string uid = 1;
+  CampusRole campusRole = 2;
+}
