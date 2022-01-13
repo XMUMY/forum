@@ -10,9 +10,10 @@ import java.util.List;
 public interface ReplyExtMapper {
     int setDeleteTimeToNow(@Param("id") int id);
 
+    // Order method refers to the proto definition
     List<Reply> selectWithLimitOffset(@Param("limit") int limit,
                                       @Param("offset") int offset,
                                       @Param("postId") Integer refPostId,
                                       @Param("replyId") Integer refReplyId,
-                                      @Param("orderByVote") boolean orderByVote);
+                                      @Param("order") int orderMethod);
 }

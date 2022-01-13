@@ -77,7 +77,7 @@ public abstract class ReplyController extends PostController {
     @Override
     public void getReply(ReplyGrpcApi.GetReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
         var replies = replyService.get(request.getPageNo(), request.getPageSize(),
-                request.getRefPostId(), null, request.getSortValue() == 1);
+                request.getRefPostId(), null, request.getSortValue());
         ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
         replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
 

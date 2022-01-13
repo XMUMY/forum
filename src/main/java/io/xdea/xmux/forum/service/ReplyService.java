@@ -31,8 +31,8 @@ public class ReplyService {
         return replyExtMapper.setDeleteTimeToNow(replyId) == 1;
     }
 
-    public List<Reply> get(int pageNo, int pageSize, Integer postId, Integer replyId, boolean orderByVote) {
+    public List<Reply> get(int pageNo, int pageSize, Integer postId, Integer replyId, int orderMethod) {
         var offset = pageNo * pageSize;
-        return replyExtMapper.selectWithLimitOffset(pageSize, offset, postId, replyId, orderByVote);
+        return replyExtMapper.selectWithLimitOffset(pageSize, offset, postId, replyId, orderMethod);
     }
 }

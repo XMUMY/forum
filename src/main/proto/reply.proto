@@ -8,8 +8,8 @@ package xdea.xmux.forum;
 
 enum SortingMethod {
   NEWEST = 0;
-  VOTE = 1;
-  OLDEST = 2;
+  OLDEST = 1;
+  VOTE = 2;
 }
 
 message CreateReplyReq {
