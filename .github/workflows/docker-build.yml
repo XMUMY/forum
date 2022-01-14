@@ -21,11 +21,11 @@ jobs:
       - name: Build jar
         run: mvn package
         env:
-          SERVICE_ADDR: localhost
+          AUTH_ENDPOINT: localhost
           DB_USER: test
-          DB_PASSWD: test
-          DB_URL: localhost
-          DB_DATABASE: test
+          DB_PASS: test
+          DB_ADDR: localhost
+          DB_NAME: test
       
       - name: Upload jar
         uses: actions/upload-artifact@v2
