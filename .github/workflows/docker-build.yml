@@ -1,0 +1,50 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      
+      - name: Download external protos
+        run: wget https://raw.githubusercontent.com/XMUMY/api/master/core/auth/v4/auth.proto -P ./src/main/proto/
+      
+      - name: Build jar
+        run: mvn package
+      
+      - name: Upload jar
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./target/forum-0.1.jar
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Download jar
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+      
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag xmumy/forum:${GITHUB_RUN_NUMBER}
+
+      - name: Publish
+        env:
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u ctrysbita --password-stdin
+          docker push xmumy/forum:${GITHUB_RUN_NUMBER}
