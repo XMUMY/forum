@@ -53,6 +53,7 @@
     </dependencies>
 
     <build>
+        <finalName>forum</finalName>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
