@@ -18,9 +18,6 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       
-      - name: Download external protos
-        run: wget https://raw.githubusercontent.com/XMUMY/api/master/core/auth/v4/auth.proto -P ./src/main/proto/
-      
       - name: Build jar
         run: mvn package
       

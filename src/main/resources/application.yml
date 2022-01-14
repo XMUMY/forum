@@ -1,0 +1,16 @@
+grpc:
+  server:
+    port: ${PORT:9999}
+  client:
+    GLOBAL:
+      address: ${SERVICE_ADDR}
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER}
+    password: ${DB_PASSWD}
+    url: jdbc:postgresql://${DB_URL}/${DB_DATABASE}
+  profiles:
+    active: ${PROFILE:dev}
+mybatis:
+  mapper-locations: mapper/**/*.xml

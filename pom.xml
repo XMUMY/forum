@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.xdea.xmux</groupId>
     <artifactId>forum</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <name>Forum</name>
     <description>Forum for XMUX</description>
     <properties>
@@ -90,14 +90,26 @@
                         <version>42.3.1</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.6.7</version>
                 <executions>
                     <execution>
-                        <id>Generate MyBatis Artifacts</id>
+                        <id>download-external-protos</id>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>wget</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <url>https://raw.githubusercontent.com/XMUMY/api/master/core/auth/v4/auth.proto</url>
+                    <unpack>false</unpack>
+                    <outputDirectory>${project.basedir}/src/main/proto/</outputDirectory>
+                </configuration>
             </plugin>
 
             <plugin>
