@@ -4,7 +4,7 @@ option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "GroupGrpcApi";
 
 import "google/protobuf/timestamp.proto";
-package xdea.xmux.forum;
+package xmux.forum.v4;
 
 message CreateGroupReq {
   string title = 1;

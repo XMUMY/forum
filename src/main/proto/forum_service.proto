@@ -7,7 +7,7 @@ import "google/protobuf/empty.proto";
 import "group.proto";
 import "post.proto";
 import "reply.proto";
-package xdea.xmux.forum;
+package xmux.forum.v4;
 
 service Forum {
   // Group

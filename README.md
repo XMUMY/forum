@@ -6,10 +6,12 @@ gRPC API specifications can be found in `src/main/proto`.
 
 ## Environment variables
 
-- `PROFILE`: Default is `dev`, which uses a dummy authentication filter. Use `prod` to connect to the real auth service.
-- `SERVICE_ADDR`: The address of other gRPC services. 
-- `PORT`
+- `PROFILE`: Default is `prod`, which connects to the real auth service. Use `dev` for development, which uses a dummy
+  authentication filter.
+- `AUTH_ENDPOINT`: The address of Auth service.
+- `PORT`: Default to 9000.
 - `DB_USER`
-- `DB_PASSWD`
-- `DB_URL`
-- `DB_DATABASE`
+- `DB_PASS`
+- `DB_ADDR`
+- `DB_PORT`: Default to 5432.
+- `DB_NAME`: Database name. 
