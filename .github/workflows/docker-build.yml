@@ -44,11 +44,11 @@ jobs:
           name: artifact
       
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag xmumy/forum:${GITHUB_RUN_NUMBER}
+        run: docker build . -t xmumy/forum:${GITHUB_RUN_NUMBER} -t xmumy/forum:latest
 
       - name: Publish
         env:
             DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo $DOCKER_PASSWORD | docker login -u ctrysbita --password-stdin
-          docker push xmumy/forum:${GITHUB_RUN_NUMBER}
+          docker push -a xmumy/forum
