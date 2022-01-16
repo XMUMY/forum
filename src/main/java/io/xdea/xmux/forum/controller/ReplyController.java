@@ -31,7 +31,8 @@ public abstract class ReplyController extends PostController {
                 .setContent(reply.getContent())
                 .setUid(reply.getUid())
                 .setRefReplyId(reply.getRefReplyId())
-                .setRefUid(reply.getRefUid() == null ? "" : reply.getRefUid()).build();
+                .setRefUid(reply.getRefUid() == null ? "" : reply.getRefUid())
+                .setRefPostId(reply.getRefPostId()).build();
     }
 
     @Override
@@ -78,6 +79,16 @@ public abstract class ReplyController extends PostController {
     public void getReply(ReplyGrpcApi.GetReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
         var replies = replyService.get(request.getPageNo(), request.getPageSize(),
                 request.getRefPostId(), null, request.getSortValue());
+        ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
+        replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
+
+        responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserReply(ReplyGrpcApi.GetUserReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
+        var replies = replyService.getUserReply(request.getPageNo(), request.getPageSize(), request.getUid());
         ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
         replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
 

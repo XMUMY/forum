@@ -30,7 +30,7 @@
             <when test="postId != null">
                 and ref_post_id = #{postId}
             </when>
-            <when test="replyId">
+            <when test="replyId != null">
                 and ref_reply_id = #{replyId}
             </when>
         </choose>
@@ -49,6 +49,13 @@
                 create_time asc
             </otherwise>
         </choose>
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectWithUser" resultMap="BaseResultMap">
+        select * from forum.reply
+        where delete_time is null and uid = #{uid}
+        order by create_time desc
         limit #{limit} offset #{offset}
     </select>
 </mapper>

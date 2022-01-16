@@ -35,4 +35,9 @@ public class ReplyService {
         var offset = pageNo * pageSize;
         return replyExtMapper.selectWithLimitOffset(pageSize, offset, postId, replyId, orderMethod);
     }
+
+    public List<Reply> getUserReply(int pageNo, int pageSize, String uid) {
+        var offset = pageNo * pageSize;
+        return replyExtMapper.selectWithUser(pageSize, offset, uid);
+    }
 }

@@ -16,4 +16,8 @@ public interface ReplyExtMapper {
                                       @Param("postId") Integer refPostId,
                                       @Param("replyId") Integer refReplyId,
                                       @Param("order") int orderMethod);
+
+    List<Reply> selectWithUser(@Param("limit") int limit,
+                               @Param("offset") int offset,
+                               @Param("uid") String uid);
 }

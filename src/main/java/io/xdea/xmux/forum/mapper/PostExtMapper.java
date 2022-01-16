@@ -9,9 +9,14 @@ import java.util.List;
 
 @Mapper
 public interface PostExtMapper {
-    List<PostWithGroupName> selectWithLimitOffset(@Param("limit") int limit,
-                                                  @Param("offset") int offset,
-                                                  @Param("cId") List<Integer> groupIds);
+    List<Post> selectWithLimitOffset(@Param("limit") int limit,
+                                     @Param("offset") int offset,
+                                     @Param("cId") List<Integer> groupIds);
+
+    List<Post> selectWithUid(@Param("limit") int limit,
+                             @Param("offset") int offset,
+                             @Param("cId") List<Integer> groupIds,
+                             @Param("uid") String uid);
 
     int setDeleteTimeToNow(@Param("id") int id);
 

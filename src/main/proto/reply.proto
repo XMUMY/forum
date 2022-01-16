@@ -29,6 +29,12 @@ message GetReplyReq {
   SortingMethod sort = 4;
 }
 
+message GetUserReplyReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+  string uid = 3;
+}
+
 message GetReplyByIdReq {
   int32 replyId = 1;
 }
@@ -50,4 +56,5 @@ message Reply {
   google.protobuf.Timestamp createTime = 6;
   int32 refReplyId = 7;
   string refUid = 8;
+  int32 refPostId = 9;
 }

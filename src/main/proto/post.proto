@@ -20,6 +20,11 @@ message GetPostReq {
   int32 pageNo = 1;
   int32 pageSize = 2;
   repeated int32 groupIds = 3;
+  string uid = 4;
+}
+
+message GetPostByIdReq {
+  int32 postId = 1;
 }
 
 message GetPostResp {
@@ -41,5 +46,4 @@ message PostDetails {
   bool topped = 8;
   bool best = 9;
   google.protobuf.Timestamp updateTime = 10;
-  string groupName = 11;
 }

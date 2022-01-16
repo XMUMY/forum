@@ -24,6 +24,22 @@ public abstract class PostController extends GroupController {
 
     // TODO: error logging
 
+    private PostGrpcApi.PostDetails buildPostDetails(Post post) {
+        return PostGrpcApi.PostDetails.newBuilder()
+                .setId(post.getId())
+                .setCreateTime(Timestamp.newBuilder()
+                        .setSeconds(post.getCreateTime().getTime() / 1000))
+                .setUpdateTime(Timestamp.newBuilder()
+                        .setSeconds(post.getUpdateTime().getTime() / 1000))
+                .setBest(post.getBest())
+                .setVote(post.getVote())
+                .setGroupId(post.getGroupId())
+                .setTopped(post.getTopped())
+                .setTitle(post.getTitle())
+                .setBody(post.getBody())
+                .setUid(post.getUid()).build();
+    }
+
     @Override
     public void createPost(PostGrpcApi.CreatePostReq request,
                            StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
@@ -91,27 +107,28 @@ public abstract class PostController extends GroupController {
         List<Integer> groupIdsList = request.getGroupIdsList();
         if (groupIdsList.size() == 0)
             groupIdsList = null;
-        var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList);
+        String uid = request.getUid().equals("") ? null : request.getUid();
+        var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
         // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         posts.forEach(post ->
-                respBuilder.addPd(PostGrpcApi.PostDetails.newBuilder()
-                        .setId(post.getId())
-                        .setCreateTime(Timestamp.newBuilder()
-                                .setSeconds(post.getCreateTime().getTime() / 1000))
-                        .setUpdateTime(Timestamp.newBuilder()
-                                .setSeconds(post.getUpdateTime().getTime() / 1000))
-                        .setBest(post.getBest())
-                        .setVote(post.getVote())
-                        .setGroupId(post.getGroupId())
-                        .setTopped(post.getTopped())
-                        .setTitle(post.getTitle())
-                        .setBody(post.getBody())
-                        .setUid(post.getUid())
-                        .setGroupName(post.getGroupName()))
+                respBuilder.addPd(buildPostDetails(post))
         );
 
         responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getPostById(PostGrpcApi.GetPostByIdReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
+
+        Post post = postService.getById(request.getPostId());
+        if (post == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Resource not found").asException());
+            return;
+        }
+        responseObserver.onNext(buildPostDetails(post));
         responseObserver.onCompleted();
     }
 

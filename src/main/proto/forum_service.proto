@@ -21,6 +21,7 @@ service Forum {
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
   rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc GetPost(GetPostReq) returns (GetPostResp);
+  rpc GetPostById(GetPostByIdReq) returns (PostDetails);
   rpc UpvotePost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
   rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
@@ -28,6 +29,7 @@ service Forum {
   // Reply
   rpc CreateReply(CreateReplyReq) returns (CreateReplyResp);
   rpc GetReply(GetReplyReq) returns (GetReplyResp);
+  rpc GetUserReply(GetUserReplyReq) returns (GetReplyResp);
   rpc GetReplyById(GetReplyByIdReq) returns (Reply);
   rpc RemoveReply(UpdateReplyReq) returns (google.protobuf.Empty);
   rpc UpvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
