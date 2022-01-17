@@ -67,8 +67,7 @@ public class SavedController extends ReplyController {
     public void removeSavedPost(SavedGrpcApi.SaveReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            if (!savedService.removeSavedPost(uid, request.getRefId()))
-                throw new Exception("savedService.removeSavedPost returned false");
+            savedService.removeSavedPost(uid, request.getRefId());
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
@@ -83,8 +82,7 @@ public class SavedController extends ReplyController {
     public void removeSavedReply(SavedGrpcApi.SaveReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            if (!savedService.removeSavedReply(uid, request.getRefId()))
-                throw new Exception("savedService.removeSavedReply returned false");
+            savedService.removeSavedReply(uid, request.getRefId());
         } catch (Exception e) {
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL
