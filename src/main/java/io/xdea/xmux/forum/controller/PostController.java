@@ -1,6 +1,7 @@
 package io.xdea.xmux.forum.controller;
 
 import io.xdea.xmux.forum.dto.PostGrpcApi;
+import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.service.GroupService;
@@ -129,6 +130,18 @@ public abstract class PostController extends GroupController {
             return;
         }
         responseObserver.onNext(buildPostDetails(post));
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getSavedPost(SavedGrpcApi.GetSavedReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
+        List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
+        PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
+        saved.forEach(post -> {
+            builder.addPd(buildPostDetails(post));
+        });
+        responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }
 

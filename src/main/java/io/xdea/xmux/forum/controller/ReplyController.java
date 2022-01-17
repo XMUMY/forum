@@ -5,6 +5,7 @@ import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import io.xdea.xmux.forum.dto.ReplyGrpcApi;
+import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Reply;
 import io.xdea.xmux.forum.service.GroupService;
@@ -89,6 +90,17 @@ public abstract class ReplyController extends PostController {
     @Override
     public void getUserReply(ReplyGrpcApi.GetUserReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
         var replies = replyService.getUserReply(request.getPageNo(), request.getPageSize(), request.getUid());
+        ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
+        replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
+
+        responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getSavedReply(SavedGrpcApi.GetSavedReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
+        var replies = replyService.getSaved(request.getPageNo(), request.getPageSize(), uid);
         ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
         replies.forEach(reply -> respBuilder.addReplies(buildReply(reply)));
 

@@ -40,4 +40,9 @@ public class ReplyService {
         var offset = pageNo * pageSize;
         return replyExtMapper.selectWithUser(pageSize, offset, uid);
     }
+
+    public List<Reply> getSaved(int pageNo, int pageSize, String uid) {
+        var offset = pageNo * pageSize;
+        return replyExtMapper.selectSaved(pageSize, offset, uid);
+    }
 }

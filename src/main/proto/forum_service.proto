@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 import "group.proto";
 import "post.proto";
 import "reply.proto";
+import "saved.proto";
 package xmux.forum.v4;
 
 service Forum {
@@ -34,4 +35,11 @@ service Forum {
   rpc RemoveReply(UpdateReplyReq) returns (google.protobuf.Empty);
   rpc UpvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
   rpc DownvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
+  // Saved
+  rpc SavePost(SaveReq) returns (SaveResp);
+  rpc SaveReply(SaveReq) returns (SaveResp);
+  rpc RemoveSavedPost(SaveReq) returns (google.protobuf.Empty);
+  rpc RemoveSavedReply(SaveReq) returns (google.protobuf.Empty);
+  rpc GetSavedPost(GetSavedReq) returns (GetPostResp);
+  rpc GetSavedReply(GetSavedReq) returns (GetReplyResp);
 }

@@ -46,6 +46,14 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <select id="selectSaved" resultMap="BaseResultMap">
+        select p.*
+        from forum.post p right join forum.saved_post s on p.id = s.post_id
+        where s.uid = #{uid} and p.delete_time is null
+        order by s.create_time desc
+        limit #{limit} offset #{offset}
+    </select>
+
     <update id="setDeleteTimeToNow">
         update forum.post
         set delete_time = now()

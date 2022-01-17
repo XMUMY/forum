@@ -53,9 +53,21 @@
     </select>
 
     <select id="selectWithUser" resultMap="BaseResultMap">
-        select * from forum.reply
-        where delete_time is null and uid = #{uid}
+        select *
+        from forum.reply
+        where delete_time is null
+          and uid = #{uid}
         order by create_time desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="selectSaved" resultMap="BaseResultMap">
+        select r.*
+        from forum.reply r
+                 right join forum.saved_reply s on r.id = s.reply_id
+        where r.delete_time is null
+          and s.uid = #{uid}
+        order by s.create_time desc
         limit #{limit} offset #{offset}
     </select>
 </mapper>

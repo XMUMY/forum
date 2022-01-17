@@ -18,6 +18,10 @@ public interface PostExtMapper {
                              @Param("cId") List<Integer> groupIds,
                              @Param("uid") String uid);
 
+    List<Post> selectSaved(@Param("limit") int limit,
+                           @Param("offset") int offset,
+                           @Param("uid") String uid);
+
     int setDeleteTimeToNow(@Param("id") int id);
 
     int setUpdateTimeToNow(@Param("id") int id);

@@ -20,4 +20,8 @@ public interface ReplyExtMapper {
     List<Reply> selectWithUser(@Param("limit") int limit,
                                @Param("offset") int offset,
                                @Param("uid") String uid);
+
+    List<Reply> selectSaved(@Param("limit") int limit,
+                            @Param("offset") int offset,
+                            @Param("uid") String uid);
 }

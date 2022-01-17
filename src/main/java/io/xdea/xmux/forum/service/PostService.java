@@ -3,7 +3,6 @@ package io.xdea.xmux.forum.service;
 import io.xdea.xmux.forum.mapper.PostExtMapper;
 import io.xdea.xmux.forum.mapper.PostMapper;
 import io.xdea.xmux.forum.model.Post;
-import io.xdea.xmux.forum.model.PostWithGroupName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +35,11 @@ public class PostService {
             return postExtMapper.selectWithLimitOffset(numPerPage, offset, groupIds);
         else
             return postExtMapper.selectWithUid(numPerPage, offset, groupIds, uid);
+    }
+
+    public List<Post> getSaved(int page, int numPerPage, String uid) {
+        int offset = page * numPerPage;
+        return postExtMapper.selectSaved(numPerPage, offset, uid);
     }
 
     public boolean softRemove(int id) {

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "SavedGrpcApi";
+
+package xmux.forum.v4;
+
+message SaveReq {
+  int32 refId = 1;
+}
+
+message SaveResp {
+  bool alreadySaved = 1;
+}
+
+message GetSavedReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+}

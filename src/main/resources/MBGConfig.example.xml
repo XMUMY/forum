@@ -40,5 +40,13 @@
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.reply', 'id'));"
                           identity="true"/>
         </table>
+        <table schema="forum" tableName="saved_post">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_post', 'id'));"
+                          identity="true"/>
+        </table>
+        <table schema="forum" tableName="saved_reply">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_reply', 'id'));"
+                          identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>
