@@ -3,8 +3,7 @@ package io.xdea.xmux.forum.controller;
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import io.xdea.xmux.forum.dto.PostGrpcApi;
-import io.xdea.xmux.forum.dto.ReplyGrpcApi;
+import io.sentry.Sentry;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.service.GroupService;
@@ -12,7 +11,7 @@ import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ReplyService;
 import io.xdea.xmux.forum.service.SavedService;
 
-public class SavedController extends ReplyController {
+public abstract class SavedController extends ReplyController {
     protected final SavedService savedService;
 
     protected SavedController(GroupService groupService, PostService postService,
@@ -33,7 +32,7 @@ public class SavedController extends ReplyController {
             if (!savedService.savePost(uid, request.getRefId()))
                 throw new Exception("savedService.savePost returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -54,7 +53,7 @@ public class SavedController extends ReplyController {
             if (!savedService.saveReply(uid, request.getRefId()))
                 throw new Exception("savedService.saveReply returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -69,7 +68,7 @@ public class SavedController extends ReplyController {
         try {
             savedService.removeSavedPost(uid, request.getRefId());
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -84,7 +83,7 @@ public class SavedController extends ReplyController {
         try {
             savedService.removeSavedReply(uid, request.getRefId());
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -92,7 +91,4 @@ public class SavedController extends ReplyController {
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
-
-
-
 }

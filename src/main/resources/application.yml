@@ -14,3 +14,6 @@ spring:
     active: ${PROFILE:prod}
 mybatis:
   mapper-locations: mapper/**/*.xml
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 0.5

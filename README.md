@@ -15,3 +15,4 @@ gRPC API specifications can be found in `src/main/proto`.
 - `DB_ADDR`
 - `DB_PORT`: Default to 5432.
 - `DB_NAME`: Database name. 
+- `SENTRY_DSN`

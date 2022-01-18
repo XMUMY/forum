@@ -1,5 +1,6 @@
 package io.xdea.xmux.forum.controller;
 
+import io.sentry.Sentry;
 import io.xdea.xmux.forum.dto.PostGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
@@ -22,8 +23,6 @@ public abstract class PostController extends GroupController {
         super(groupService);
         this.postService = postService;
     }
-
-    // TODO: error logging
 
     private PostGrpcApi.PostDetails buildPostDetails(Post post) {
         return PostGrpcApi.PostDetails.newBuilder()
@@ -60,7 +59,7 @@ public abstract class PostController extends GroupController {
             if (!postService.create(post))
                 throw new Exception("postService.create returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -75,26 +74,26 @@ public abstract class PostController extends GroupController {
     public void removePost(PostGrpcApi.UpdatePostReq request,
                            StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        Post post = postService.getById(request.getPostId());
-        // Check if the user has privilege to remove the post
-        if (post == null) {
-            responseObserver.onError(Status.INVALID_ARGUMENT
-                    .withDescription("Post does not exist").asException());
-            return;
-        }
-        String postUid = post.getUid();
-        if (postUid == null || !postUid.equals(uid)) {
-            responseObserver.onError(Status.PERMISSION_DENIED
-                    .withDescription("Not the owner of the post").asException());
-            return;
-        }
-
-        // Soft delete
         try {
+            Post post = postService.getById(request.getPostId());
+            // Check if the user has privilege to remove the post
+            if (post == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Post does not exist").asException());
+                return;
+            }
+            String postUid = post.getUid();
+            if (postUid == null || !postUid.equals(uid)) {
+                responseObserver.onError(Status.PERMISSION_DENIED
+                        .withDescription("Not the owner of the post").asException());
+                return;
+            }
+
+            // Soft delete
             if (!postService.softRemove(request.getPostId()))
                 throw new Exception("postService.softRemove returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -109,12 +108,19 @@ public abstract class PostController extends GroupController {
         if (groupIdsList.size() == 0)
             groupIdsList = null;
         String uid = request.getUid().equals("") ? null : request.getUid();
-        var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
-        // ASK: is there better way to avoid copying?
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
-        posts.forEach(post ->
-                respBuilder.addPd(buildPostDetails(post))
-        );
+        try {
+            var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
+            // ASK: is there better way to avoid copying?
+            posts.forEach(post ->
+                    respBuilder.addPd(buildPostDetails(post))
+            );
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
 
         responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();
@@ -122,27 +128,36 @@ public abstract class PostController extends GroupController {
 
     @Override
     public void getPostById(PostGrpcApi.GetPostByIdReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
-
-        Post post = postService.getById(request.getPostId());
-        if (post == null) {
-            responseObserver.onError(Status.NOT_FOUND
-                    .withDescription("Resource not found").asException());
-            return;
+        try {
+            Post post = postService.getById(request.getPostId());
+            if (post == null) {
+                responseObserver.onError(Status.NOT_FOUND
+                        .withDescription("Resource not found").asException());
+                return;
+            }
+            responseObserver.onNext(buildPostDetails(post));
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            throw e;
         }
-        responseObserver.onNext(buildPostDetails(post));
-        responseObserver.onCompleted();
     }
 
     @Override
     public void getSavedPost(SavedGrpcApi.GetSavedReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
-        List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
-        PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
-        saved.forEach(post -> {
-            builder.addPd(buildPostDetails(post));
-        });
-        responseObserver.onNext(builder.build());
-        responseObserver.onCompleted();
+        try {
+            String uid = AuthInterceptor.UID.get();
+            List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
+            PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
+            saved.forEach(post -> {
+                builder.addPd(buildPostDetails(post));
+            });
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            throw e;
+        }
     }
 
     @Override
@@ -151,7 +166,7 @@ public abstract class PostController extends GroupController {
             if (!postService.upvote(request.getPostId()))
                 throw new Exception("postService.upvote returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -166,7 +181,7 @@ public abstract class PostController extends GroupController {
             if (!postService.downvote(request.getPostId()))
                 throw new Exception("postService.downvote returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -182,7 +197,7 @@ public abstract class PostController extends GroupController {
             if (!postService.toggleBest(request.getPostId()))
                 throw new Exception("postService.toggleBest returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
@@ -198,7 +213,7 @@ public abstract class PostController extends GroupController {
             if (!postService.toggleTop(request.getPostId()))
                 throw new Exception("postService.toggleTop returned false");
         } catch (Exception e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("DB error").asException());
             return;
