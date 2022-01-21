@@ -6,6 +6,7 @@ import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.service.GroupService;
+import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.PostService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
@@ -15,12 +16,12 @@ import io.grpc.stub.StreamObserver;
 import java.util.Date;
 import java.util.List;
 
-public abstract class PostController extends GroupController {
+public abstract class PostController extends NotifController {
 
     protected final PostService postService;
 
-    protected PostController(GroupService groupService, PostService postService) {
-        super(groupService);
+    protected PostController(GroupService groupService, NotifService notifService, PostService postService) {
+        super(groupService, notifService);
         this.postService = postService;
     }
 

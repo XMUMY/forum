@@ -10,6 +10,7 @@ import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Reply;
 import io.xdea.xmux.forum.service.GroupService;
+import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ReplyService;
 
@@ -18,8 +19,8 @@ import java.util.Date;
 public abstract class ReplyController extends PostController {
     protected final ReplyService replyService;
 
-    protected ReplyController(GroupService groupService, PostService postService, ReplyService replyService) {
-        super(groupService, postService);
+    protected ReplyController(GroupService groupService, NotifService notifService, PostService postService, ReplyService replyService) {
+        super(groupService, notifService, postService);
         this.replyService = replyService;
     }
 

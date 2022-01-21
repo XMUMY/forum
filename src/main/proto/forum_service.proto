@@ -8,6 +8,7 @@ import "group.proto";
 import "post.proto";
 import "reply.proto";
 import "saved.proto";
+import "notif.proto";
 package xmux.forum.v4;
 
 service Forum {
@@ -42,4 +43,8 @@ service Forum {
   rpc RemoveSavedReply(SaveReq) returns (google.protobuf.Empty);
   rpc GetSavedPost(GetSavedReq) returns (GetPostResp);
   rpc GetSavedReply(GetSavedReq) returns (GetReplyResp);
+  // Notif
+  rpc GetNotifNum(google.protobuf.Empty) returns (GetNotifNumResp);
+  rpc GetNotif(GetNotifReq) returns (GetNotifResp);
+  rpc NotifMarkAsRead(NotifMarkAsReadReq) returns (google.protobuf.Empty);
 }

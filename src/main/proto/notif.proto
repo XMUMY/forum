@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "NotifGrpcApi";
+
+import "google/protobuf/timestamp.proto";
+package xmux.forum.v4;
+
+message NotifMarkAsReadReq {
+  repeated int32 ids = 1;
+}
+
+message GetNotifNumResp {
+  int32 num = 1;
+}
+
+message GetNotifReq {
+  int32 pageNo = 1;
+  int32 pageSize = 2;
+}
+
+message GetNotifResp {
+  repeated Notif notifs = 1;
+}
+
+enum NotifType {
+  POST_REPLY = 0;
+  REPLY_REPLY = 1;
+}
+
+message Notif {
+  int32 id = 1;
+  NotifType type = 2;
+  int32 refId = 3;
+  int32 objId = 4;
+  string refContent = 5;
+  string objContent = 6;
+  bool hasRead = 7;
+  google.protobuf.Timestamp createTime = 8;
+}

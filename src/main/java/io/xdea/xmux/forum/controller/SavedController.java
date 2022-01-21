@@ -6,17 +6,14 @@ import io.grpc.stub.StreamObserver;
 import io.sentry.Sentry;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
-import io.xdea.xmux.forum.service.GroupService;
-import io.xdea.xmux.forum.service.PostService;
-import io.xdea.xmux.forum.service.ReplyService;
-import io.xdea.xmux.forum.service.SavedService;
+import io.xdea.xmux.forum.service.*;
 
 public abstract class SavedController extends ReplyController {
     protected final SavedService savedService;
 
-    protected SavedController(GroupService groupService, PostService postService,
+    protected SavedController(GroupService groupService, NotifService notifService, PostService postService,
                               ReplyService replyService, SavedService savedService) {
-        super(groupService, postService, replyService);
+        super(groupService, notifService, postService, replyService);
         this.savedService = savedService;
     }
 
