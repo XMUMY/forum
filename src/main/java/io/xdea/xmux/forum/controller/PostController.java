@@ -129,36 +129,26 @@ public abstract class PostController extends NotifController {
 
     @Override
     public void getPostById(PostGrpcApi.GetPostByIdReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
-        try {
-            Post post = postService.getById(request.getPostId());
-            if (post == null) {
-                responseObserver.onError(Status.NOT_FOUND
-                        .withDescription("Resource not found").asException());
-                return;
-            }
-            responseObserver.onNext(buildPostDetails(post));
-            responseObserver.onCompleted();
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw e;
+        Post post = postService.getById(request.getPostId());
+        if (post == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Resource not found").asException());
+            return;
         }
+        responseObserver.onNext(buildPostDetails(post));
+        responseObserver.onCompleted();
     }
 
     @Override
     public void getSavedPost(SavedGrpcApi.GetSavedReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        try {
-            String uid = AuthInterceptor.UID.get();
-            List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
-            PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
-            saved.forEach(post -> {
-                builder.addPd(buildPostDetails(post));
-            });
-            responseObserver.onNext(builder.build());
-            responseObserver.onCompleted();
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw e;
-        }
+        String uid = AuthInterceptor.UID.get();
+        List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
+        PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
+        saved.forEach(post -> {
+            builder.addPd(buildPostDetails(post));
+        });
+        responseObserver.onNext(builder.build());
+        responseObserver.onCompleted();
     }
 
     @Override

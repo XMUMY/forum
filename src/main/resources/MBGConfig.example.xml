@@ -7,6 +7,7 @@
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
         <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
+        <plugin type="io.xdea.xmux.MbgPagingPlugin"/>
 
         <jdbcConnection driverClass="org.postgresql.Driver"
                         connectionURL="jdbc:postgresql://host:port/db?user=user&amp;password=passwd"/>
@@ -46,6 +47,10 @@
         </table>
         <table schema="forum" tableName="saved_reply">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_reply', 'id'));"
+                          identity="true"/>
+        </table>
+        <table schema="forum" tableName="notif">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.notif', 'id'));"
                           identity="true"/>
         </table>
     </context>
