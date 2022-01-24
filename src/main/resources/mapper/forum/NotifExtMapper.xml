@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.xdea.xmux.forum.mapper.NotifExtMapper">
+    <resultMap id="BaseResultMap" type="io.xdea.xmux.forum.model.Notif">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="uid" jdbcType="VARCHAR" property="uid"/>
+        <result column="sender_uid" jdbcType="VARCHAR" property="senderUid"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="ref_id" jdbcType="INTEGER" property="refId"/>
+        <result column="obj_id" jdbcType="INTEGER" property="objId"/>
+        <result column="value" jdbcType="INTEGER" property="value"/>
+        <result column="has_read" jdbcType="BIT" property="hasRead"/>
+    </resultMap>
+    <resultMap id="NotifWithContent" type="io.xdea.xmux.forum.model.NotifWithContent" extends="BaseResultMap">
+        <result column="ref_content" jdbcType="VARCHAR" property="refContent"/>
+        <result column="obj_content" jdbcType="VARCHAR" property="objContent"/>
+    </resultMap>
+    <select id="selectWithLimitOffset" resultMap="NotifWithContent">
+        select n.*, coalesce(p.title, rr.content) ref_content, r.content obj_content
+        from forum.notif n
+                 left join forum.post p on p.id = n.ref_id and n.type = 0
+                 left join forum.reply rr on rr.id = n.ref_id and n.type = 1
+                 left join forum.reply r on r.id = n.obj_id
+        where n.uid = #{uid}
+        limit #{limit} offset #{offset}
+    </select>
+</mapper>

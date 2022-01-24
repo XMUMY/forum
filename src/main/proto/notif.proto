@@ -37,4 +37,5 @@ message Notif {
   string objContent = 6;
   bool hasRead = 7;
   google.protobuf.Timestamp createTime = 8;
+  string senderUid = 9;
 }

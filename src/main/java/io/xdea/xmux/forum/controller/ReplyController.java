@@ -5,9 +5,12 @@ import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import io.sentry.Sentry;
+import io.xdea.xmux.forum.dto.NotifGrpcApi;
 import io.xdea.xmux.forum.dto.ReplyGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
+import io.xdea.xmux.forum.model.Notif;
+import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.model.Reply;
 import io.xdea.xmux.forum.service.GroupService;
 import io.xdea.xmux.forum.service.NotifService;
@@ -41,6 +44,27 @@ public abstract class ReplyController extends PostController {
     @Override
     public void createReply(ReplyGrpcApi.CreateReplyReq request, StreamObserver<ReplyGrpcApi.CreateReplyResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
+        String refUid = null;
+        // When the reply is to a post, the reply id == -1, post id != -1,
+        // When the reply is to a reply, both reply and post id != -1.
+        if (request.getRefReplyId() != -1) {
+            Reply refReply = replyService.getById(request.getRefReplyId());
+            if (refReply == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            refUid = refReply.getUid();
+        } else {
+            Post refPost = postService.getById(request.getRefPostId());
+            if (refPost == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            refUid = refPost.getUid();
+        }
+
         Reply reply = new Reply()
                 .withCreateTime(new Date())
                 .withUid(uid)
@@ -48,30 +72,33 @@ public abstract class ReplyController extends PostController {
                 .withTopped(false)
                 .withVote(0)
                 .withRefReplyId(request.getRefReplyId())
-                .withRefPostId(request.getRefPostId());
+                .withRefPostId(request.getRefPostId())
+                .withRefUid(refUid);
 
-        // Cache Reply UID for front-end display
-        if (reply.getRefReplyId() != -1) {
-            Reply refReply = replyService.getById(reply.getRefReplyId());
-            if (refReply == null) {
-                responseObserver.onError(Status.INVALID_ARGUMENT
-                        .withDescription("Resource not exist").asException());
-                return;
-            }
-            reply.setRefUid(refReply.getUid());
+        if (!replyService.create(reply))
+            throw new RuntimeException("replyService.create returned false");
+        if (!postService.renewUpdateTime(request.getRefPostId()))
+            throw new RuntimeException("postService.renewUpdateTime returned false");
+
+        // TODO: send message to NATS
+        Notif notif = new Notif()
+                .withHasRead(false)
+                .withCreateTime(new Date())
+                .withObjId(reply.getId())
+                .withUid(refUid)
+                .withSenderUid(uid);
+
+        if (request.getRefReplyId() != -1) {
+            notif.setRefId(request.getRefReplyId());
+            notif.setType(NotifGrpcApi.NotifType.REPLY_REPLY_VALUE);
+        } else {
+            notif.setRefId(request.getRefPostId());
+            notif.setType(NotifGrpcApi.NotifType.POST_REPLY_VALUE);
         }
 
-        try {
-            if (!replyService.create(reply))
-                throw new Exception("replyService.create returned false");
-            if (!postService.renewUpdateTime(request.getRefPostId()))
-                throw new Exception("postService.renewUpdateTime returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
+        if (!notifService.createNotif(notif))
+            throw new RuntimeException("notifService.createNotif returned false");
+
         var resp = ReplyGrpcApi.CreateReplyResp
                 .newBuilder().setReplyId(reply.getId()).build();
         responseObserver.onNext(resp);
