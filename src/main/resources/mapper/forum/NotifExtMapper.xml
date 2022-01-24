@@ -23,6 +23,7 @@
                  left join forum.reply rr on rr.id = n.ref_id and n.type = 1
                  left join forum.reply r on r.id = n.obj_id
         where n.uid = #{uid}
+        order by create_time desc
         limit #{limit} offset #{offset}
-    </select>
+   </select>
 </mapper>
