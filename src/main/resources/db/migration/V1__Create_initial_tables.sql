@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS forum;
+
 CREATE TABLE IF NOT EXISTS forum.group
 (
     id          SERIAL,
