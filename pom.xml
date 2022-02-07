@@ -14,7 +14,7 @@
     <name>Forum</name>
     <description>Forum for XMUX</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>11</java.version>
         <protobuf.version>3.19.4</protobuf.version>
         <grpc.version>1.43.1</grpc.version>
         <skipTests>true</skipTests>
