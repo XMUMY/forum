@@ -4,6 +4,7 @@ grpc:
   client:
     GLOBAL:
       address: ${AUTH_ENDPOINT}
+      negotiation-type: plaintext
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
