@@ -4,16 +4,16 @@ import io.xdea.xmux.forum.service.UserService;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import xmux.core.auth.v4.AuthGrpc;
-import xmux.core.auth.v4.AuthOuterClass;
+import xmux.core.auth.v4.Auth;
+import xmux.core.auth.v4.AuthInternalGrpc;
 
 import java.util.Base64;
 
 @Service
 @Profile("prod")
 public class XmuxUserServiceImpl implements UserService {
-    @GrpcClient(AuthGrpc.SERVICE_NAME)
-    private AuthGrpc.AuthBlockingStub authBlockingStub;
+    @GrpcClient(AuthInternalGrpc.SERVICE_NAME)
+    private AuthInternalGrpc.AuthInternalBlockingStub authBlockingStub;
 
     @Override
     public AuthResult auth(String token) {
@@ -26,9 +26,9 @@ public class XmuxUserServiceImpl implements UserService {
         if (userInfo.length != 2) {
             return new AuthResult(null, false);
         }
-        final var authUserResp = authBlockingStub.authUser(AuthOuterClass.AuthUserReq
+        final var authUserResp = authBlockingStub.authUser(Auth.AuthUserReq
                 .newBuilder().setCampusIdPassword(
-                        AuthOuterClass.CampusIdPasswordCredential.newBuilder()
+                        Auth.CampusIdPasswordCredential.newBuilder()
                                 .setCampusId(userInfo[0])
                                 .setPassword(userInfo[1]))
                 .build());
