@@ -21,12 +21,12 @@ public abstract class SavedController extends PostController {
     public void savePost(SavedGrpcApi.SaveReq request, StreamObserver<SavedGrpcApi.SaveResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            if (savedService.checkPostSaved(uid, request.getRefId())) {
+            if (savedService.checkThreadSaved(uid, request.getRefId())) {
                 responseObserver.onNext(SavedGrpcApi.SaveResp.newBuilder().setAlreadySaved(true).build());
                 responseObserver.onCompleted();
                 return;
             }
-            if (!savedService.savePost(uid, request.getRefId()))
+            if (!savedService.saveThread(uid, request.getRefId()))
                 throw new Exception("savedService.savePost returned false");
         } catch (Exception e) {
             Sentry.captureException(e);
@@ -42,12 +42,12 @@ public abstract class SavedController extends PostController {
     public void saveReply(SavedGrpcApi.SaveReq request, StreamObserver<SavedGrpcApi.SaveResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            if (savedService.checkReplySaved(uid, request.getRefId())) {
+            if (savedService.checkPostSaved(uid, request.getRefId())) {
                 responseObserver.onNext(SavedGrpcApi.SaveResp.newBuilder().setAlreadySaved(true).build());
                 responseObserver.onCompleted();
                 return;
             }
-            if (!savedService.saveReply(uid, request.getRefId()))
+            if (!savedService.savePost(uid, request.getRefId()))
                 throw new Exception("savedService.saveReply returned false");
         } catch (Exception e) {
             Sentry.captureException(e);
@@ -63,7 +63,7 @@ public abstract class SavedController extends PostController {
     public void removeSavedPost(SavedGrpcApi.SaveReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            savedService.removeSavedPost(uid, request.getRefId());
+            savedService.removeSavedThread(uid, request.getRefId());
         } catch (Exception e) {
             Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
@@ -78,7 +78,7 @@ public abstract class SavedController extends PostController {
     public void removeSavedReply(SavedGrpcApi.SaveReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         try {
-            savedService.removeSavedReply(uid, request.getRefId());
+            savedService.removeSavedPost(uid, request.getRefId());
         } catch (Exception e) {
             Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
