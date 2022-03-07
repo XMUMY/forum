@@ -20,37 +20,41 @@
                              type="XMLMAPPER"/>
 
 
-        <table schema="forum" tableName="group">
+        <table schema="forum" tableName="forum">
             <generatedKey column="id"
-                          sqlStatement="SELECT currval(pg_get_serial_sequence('forum.group', 'id'));"
+                          sqlStatement="SELECT currval(pg_get_serial_sequence('forum.forum', 'id'));"
                           identity="true"/>
         </table>
         <table schema="forum" tableName="member">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.member', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="forum" tableName="moderate">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.moderate', 'id'));"
-                          identity="true"/>
-        </table>
         <table schema="forum" tableName="post">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.post', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="forum" tableName="reply">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.reply', 'id'));"
+        <table schema="forum" tableName="thread">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.thread', 'id'));"
                           identity="true"/>
         </table>
         <table schema="forum" tableName="saved_post">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_post', 'id'));"
                           identity="true"/>
         </table>
-        <table schema="forum" tableName="saved_reply">
-            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_reply', 'id'));"
+        <table schema="forum" tableName="saved_thread">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_thread', 'id'));"
                           identity="true"/>
         </table>
         <table schema="forum" tableName="notif">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.notif', 'id'));"
+                          identity="true"/>
+        </table>
+        <table schema="forum" tableName="liked_post">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.liked_post', 'id'));"
+                          identity="true"/>
+        </table>
+        <table schema="forum" tableName="liked_thread">
+            <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.liked_thread', 'id'));"
                           identity="true"/>
         </table>
     </context>

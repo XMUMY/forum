@@ -1,105 +1,106 @@
 CREATE SCHEMA IF NOT EXISTS forum;
 
-CREATE TABLE IF NOT EXISTS forum.group
-(
-    id          SERIAL,
-    title       TEXT      NULL,
-    description TEXT      NULL,
-    create_time TIMESTAMP NULL,
-    delete_time TIMESTAMP NULL,
-    creator_uid TEXT      NOT NULL,
-    PRIMARY KEY (id)
+CREATE TABLE forum."forum" (
+                         "id" SERIAL PRIMARY KEY,
+                         "title" TEXT,
+                         "description" TEXT,
+                         "create_at" timestamp,
+                         "update_at" timestamp,
+                         "creator_uid" TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS forum.post
-(
-    id          SERIAL,
-    uid         TEXT      NULL,
-    create_time TIMESTAMP NULL,
-    update_time TIMESTAMP NULL,
-    delete_time TIMESTAMP NULL,
-    title       TEXT      NULL,
-    body        TEXT      NULL,
-    vote        INT       NULL DEFAULT 0,
-    group_id    INT       NOT NULL,
-    topped      BOOLEAN   NULL DEFAULT FALSE,
-    best        BOOLEAN   NULL DEFAULT FALSE,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_post_group1
-        FOREIGN KEY (group_id)
-            REFERENCES forum.group (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+CREATE TABLE forum."member" (
+                          "id" SERIAL PRIMARY KEY,
+                          "uid" TEXT NOT NULL,
+                          "forum_id" INT NOT NULL,
+                          "create_at" timestamp
 );
 
-CREATE TABLE IF NOT EXISTS forum.reply
-(
-    id           SERIAL,
-    content      TEXT      NULL,
-    create_time  TIMESTAMP NULL,
-    uid          TEXT      NULL,
-    vote         INT       NULL,
-    ref_post_id  INT       NOT NULL DEFAULT -1,
-    ref_reply_id INT       NOT NULL DEFAULT -1,
-    ref_uid      TEXT      NULL,
-    topped       BOOLEAN   NULL     DEFAULT FALSE,
-    delete_time  TIMESTAMP NULL,
-    PRIMARY KEY (id)
+CREATE TABLE forum."thread" (
+                          "id" SERIAL PRIMARY KEY,
+                          "uid" TEXT,
+                          "forum_id" INT NOT NULL,
+                          "title" TEXT,
+                          "body" TEXT,
+                          "create_at" timestamp,
+                          "update_at" timestamp,
+                          "like" INT DEFAULT 0,
+                          "pinned" BOOLEAN DEFAULT FALSE,
+                          "digest" BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS forum.member
-(
-    id          SERIAL,
-    uid         TEXT      NOT NULL,
-    group_id    INT       NOT NULL,
-    create_time TIMESTAMP NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_member_group1
-        FOREIGN KEY (group_id)
-            REFERENCES forum.group (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+CREATE TABLE forum."post" (
+                        "id" SERIAL PRIMARY KEY,
+                        "uid" TEXT,
+                        "thread_id" INT NOT NULL,
+                        "parent_id" INT NOT NULL DEFAULT (-1),
+                        "ref_post_id" INT NOT NULL DEFAULT (-1),
+                        "ref_post_uid" TEXT,
+                        "content" TEXT,
+                        "create_at" timestamp,
+                        "update_at" timestamp,
+                        "like" INT DEFAULT 0,
+                        "pinned" BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS forum.moderate
-(
-    id          SERIAL,
-    uid         TEXT      NOT NULL,
-    group_id    INT       NOT NULL,
-    create_time TIMESTAMP NULL,
-    delete_time TIMESTAMP NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_moderate_group1
-        FOREIGN KEY (group_id)
-            REFERENCES forum.group (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+CREATE TABLE forum."saved_thread" (
+                                "id" SERIAL PRIMARY KEY,
+                                "uid" TEXT NOT NULL,
+                                "thread_id" INT NOT NULL,
+                                "create_at" timestamp
 );
 
-CREATE TABLE IF NOT EXISTS forum.saved_post
-(
-    id          SERIAL,
-    uid         TEXT      NOT NULL,
-    post_id     INT       NOT NULL,
-    create_time TIMESTAMP NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_saved_post1
-        FOREIGN KEY (post_id)
-            REFERENCES forum.post (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+CREATE TABLE forum."saved_post" (
+                              "id" SERIAL PRIMARY KEY,
+                              "uid" TEXT NOT NULL,
+                              "post_id" INT NOT NULL,
+                              "create_at" timestamp
 );
 
-CREATE TABLE IF NOT EXISTS forum.saved_reply
-(
-    id          SERIAL,
-    uid         TEXT      NOT NULL,
-    reply_id    INT       NOT NULL,
-    create_time TIMESTAMP NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_saved_reply1
-        FOREIGN KEY (reply_id)
-            REFERENCES forum.reply (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+CREATE TABLE forum."liked_thread" (
+                                "id" SERIAL PRIMARY KEY,
+                                "uid" TEXT NOT NULL,
+                                "thread_id" INT NOT NULL,
+                                "like" BOOLEAN DEFAULT TRUE,
+                                "create_at" timestamp
 );
+
+CREATE TABLE forum."liked_post" (
+                              "id" SERIAL PRIMARY KEY,
+                              "uid" TEXT NOT NULL,
+                              "post_id" INT NOT NULL,
+                              "like" BOOLEAN DEFAULT TRUE,
+                              "create_at" timestamp
+);
+
+CREATE TABLE forum."notif" (
+                         "id" SERIAL PRIMARY KEY,
+                         "create_time" timestamp NOT NULL,
+                         "uid" TEXT NOT NULL,
+                         "sender_uid" TEXT NOT NULL,
+                         "type" INT NOT NULL,
+                         "ref_id" INT NOT NULL,
+                         "obj_id" INT NOT NULL,
+                         "value" INT,
+                         "has_read" BOOLEAN NOT NULL
+);
+
+ALTER TABLE forum."thread" ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");
+
+ALTER TABLE forum."post" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+
+ALTER TABLE forum."member" ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");
+
+ALTER TABLE forum."saved_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+
+ALTER TABLE forum."saved_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id");
+
+ALTER TABLE forum."liked_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+
+ALTER TABLE forum."liked_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id");
+
+COMMENT ON COLUMN forum."notif".sender_uid IS 'The uid of notification sender';
+COMMENT ON COLUMN forum."notif".type IS 'The type values refer to notif.proto';
+COMMENT ON COLUMN forum."notif".ref_id IS 'The referring object of the notification';
+COMMENT ON COLUMN forum."notif".obj_id IS 'The object that triggered the notification';
+COMMENT ON COLUMN forum."notif".value IS 'The meaning of value depends on notif type';

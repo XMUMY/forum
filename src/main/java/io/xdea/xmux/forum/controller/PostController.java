@@ -1,121 +1,117 @@
 package io.xdea.xmux.forum.controller;
 
-import io.sentry.Sentry;
-import io.xdea.xmux.forum.dto.PostGrpcApi;
-import io.xdea.xmux.forum.dto.SavedGrpcApi;
-import io.xdea.xmux.forum.interceptor.AuthInterceptor;
-import io.xdea.xmux.forum.model.Post;
-import io.xdea.xmux.forum.service.GroupService;
-import io.xdea.xmux.forum.service.NotifService;
-import io.xdea.xmux.forum.service.PostService;
 import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import io.sentry.Sentry;
+import io.xdea.xmux.forum.dto.NotifGrpcApi;
+import io.xdea.xmux.forum.dto.ReplyGrpcApi;
+import io.xdea.xmux.forum.dto.SavedGrpcApi;
+import io.xdea.xmux.forum.interceptor.AuthInterceptor;
+import io.xdea.xmux.forum.model.Notif;
+import io.xdea.xmux.forum.model.Post;
+import io.xdea.xmux.forum.model.Thread;
+import io.xdea.xmux.forum.service.ForumService;
+import io.xdea.xmux.forum.service.NotifService;
+import io.xdea.xmux.forum.service.ThreadService;
+import io.xdea.xmux.forum.service.PostService;
 
 import java.util.Date;
-import java.util.List;
 
-public abstract class PostController extends NotifController {
-
+public abstract class PostController extends ThreadController {
     protected final PostService postService;
 
-    protected PostController(GroupService groupService, NotifService notifService, PostService postService) {
-        super(groupService, notifService);
+    protected PostController(ForumService forumService, NotifService notifService, ThreadService threadService, PostService postService) {
+        super(forumService, notifService, threadService);
         this.postService = postService;
     }
 
-    private PostGrpcApi.PostDetails buildPostDetails(Post post) {
-        return PostGrpcApi.PostDetails.newBuilder()
+    private ReplyGrpcApi.Reply buildReply(Post post) {
+        return ReplyGrpcApi.Reply.newBuilder()
                 .setId(post.getId())
                 .setCreateTime(Timestamp.newBuilder()
-                        .setSeconds(post.getCreateTime().getTime() / 1000))
-                .setUpdateTime(Timestamp.newBuilder()
-                        .setSeconds(post.getUpdateTime().getTime() / 1000))
-                .setBest(post.getBest())
-                .setVote(post.getVote())
-                .setGroupId(post.getGroupId())
-                .setTopped(post.getTopped())
-                .setTitle(post.getTitle())
-                .setBody(post.getBody())
-                .setUid(post.getUid()).build();
+                        .setSeconds(post.getCreateAt().getTime() / 1000))
+                .setVote(post.getLike())
+                .setTopped(post.getPinned())
+                .setContent(post.getContent())
+                .setUid(post.getUid())
+                .setRefReplyId(post.getParentId())
+                .setRefUid(post.getRefPostUid() == null ? "" : post.getRefPostUid())
+                .setRefPostId(post.getThreadId()).build();
     }
 
     @Override
-    public void createPost(PostGrpcApi.CreatePostReq request,
-                           StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
+    public void createReply(ReplyGrpcApi.CreateReplyReq request, StreamObserver<ReplyGrpcApi.CreateReplyResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        Date nowTime = new Date();
-        Post post = new Post()
-                .withTitle(request.getTitle())
-                .withBody(request.getBody())
-                .withGroupId(request.getGroupId())
-                .withUid(uid)
-                .withCreateTime(nowTime)
-                .withUpdateTime(nowTime)
-                .withVote(0)
-                .withBest(false)
-                .withTopped(false);
-        try {
-            if (!postService.create(post))
-                throw new Exception("postService.create returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
+        String refUid = null;
+        // When the post is to a thread, the post id == -1, post id != -1,
+        // When the post is to a post, both post and post id != -1.
+        if (request.getRefReplyId() != -1) {
+            Post refPost = postService.getById(request.getRefReplyId());
+            if (refPost == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            refUid = refPost.getUid();
+        } else {
+            Thread refThread = threadService.getById(request.getRefPostId());
+            if (refThread == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            refUid = refThread.getUid();
         }
-        var resp = PostGrpcApi.CreatePostResp
-                .newBuilder().setPostId(post.getId()).build();
+
+        Post post = new Post()
+                .withCreateAt(new Date())
+                .withUid(uid)
+                .withContent(request.getContent())
+                .withPinned(false)
+                .withLike(0)
+                .withParentId(request.getRefReplyId())
+                .withThreadId(request.getRefPostId())
+                .withRefPostUid(refUid);
+
+        if (!postService.create(post))
+            throw new RuntimeException("postService.create returned false");
+        if (!threadService.renewUpdateTime(request.getRefPostId()))
+            throw new RuntimeException("threadService.renewUpdateTime returned false");
+
+        // TODO: send message to NATS
+        Notif notif = new Notif()
+                .withHasRead(false)
+                .withCreateTime(new Date())
+                .withObjId(post.getId())
+                .withUid(refUid)
+                .withSenderUid(uid);
+
+        if (request.getRefReplyId() != -1) {
+            notif.setRefId(request.getRefReplyId());
+            notif.setType(NotifGrpcApi.NotifType.REPLY_REPLY_VALUE);
+        } else {
+            notif.setRefId(request.getRefPostId());
+            notif.setType(NotifGrpcApi.NotifType.POST_REPLY_VALUE);
+        }
+
+        if (!notifService.createNotif(notif))
+            throw new RuntimeException("notifService.createNotif returned false");
+
+        var resp = ReplyGrpcApi.CreateReplyResp
+                .newBuilder().setReplyId(post.getId()).build();
         responseObserver.onNext(resp);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void removePost(PostGrpcApi.UpdatePostReq request,
-                           StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+    public void getReply(ReplyGrpcApi.GetReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
+        ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
         try {
-            Post post = postService.getById(request.getPostId());
-            // Check if the user has privilege to remove the post
-            if (post == null) {
-                responseObserver.onError(Status.INVALID_ARGUMENT
-                        .withDescription("Post does not exist").asException());
-                return;
-            }
-            String postUid = post.getUid();
-            if (postUid == null || !postUid.equals(uid)) {
-                responseObserver.onError(Status.PERMISSION_DENIED
-                        .withDescription("Not the owner of the post").asException());
-                return;
-            }
-
-            // Soft delete
-            if (!postService.softRemove(request.getPostId()))
-                throw new Exception("postService.softRemove returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        List<Integer> groupIdsList = request.getGroupIdsList();
-        if (groupIdsList.size() == 0)
-            groupIdsList = null;
-        String uid = request.getUid().equals("") ? null : request.getUid();
-        PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
-        try {
-            var posts = postService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
-            // ASK: is there better way to avoid copying?
-            posts.forEach(post ->
-                    respBuilder.addPd(buildPostDetails(post))
-            );
+            var posts = postService.get(request.getPageNo(), request.getPageSize(),
+                    request.getRefPostId(), request.getSortValue());
+            posts.forEach(post -> respBuilder.addReplies(buildReply(post)));
         } catch (Exception e) {
             Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
@@ -128,34 +124,77 @@ public abstract class PostController extends NotifController {
     }
 
     @Override
-    public void getPostById(PostGrpcApi.GetPostByIdReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
-        Post post = postService.getById(request.getPostId());
-        if (post == null) {
-            responseObserver.onError(Status.NOT_FOUND
-                    .withDescription("Resource not found").asException());
+    public void getUserReply(ReplyGrpcApi.GetUserReplyReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
+        ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
+        try {
+            var posts = postService.getUserPost(request.getPageNo(), request.getPageSize(), request.getUid());
+            posts.forEach(post -> respBuilder.addReplies(buildReply(post)));
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
             return;
         }
-        responseObserver.onNext(buildPostDetails(post));
+
+        responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getSavedPost(SavedGrpcApi.GetSavedReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
+    public void getSavedReply(SavedGrpcApi.GetSavedReq request, StreamObserver<ReplyGrpcApi.GetReplyResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        List<Post> saved = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
-        PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
-        saved.forEach(post -> {
-            builder.addPd(buildPostDetails(post));
-        });
-        responseObserver.onNext(builder.build());
+        ReplyGrpcApi.GetReplyResp.Builder respBuilder = ReplyGrpcApi.GetReplyResp.newBuilder();
+        try {
+            var posts = postService.getSaved(request.getPageNo(), request.getPageSize(), uid);
+            posts.forEach(post -> respBuilder.addReplies(buildReply(post)));
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("DB error").asException());
+            return;
+        }
+
+        responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void upvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
+    public void getReplyById(ReplyGrpcApi.GetReplyByIdReq request, StreamObserver<ReplyGrpcApi.Reply> responseObserver) {
         try {
-            if (!postService.upvote(request.getPostId()))
-                throw new Exception("postService.upvote returned false");
+            Post post = postService.getById(request.getReplyId());
+            if (post == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource not exist").asException());
+                return;
+            }
+            responseObserver.onNext(buildReply(post));
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            throw e;
+        }
+    }
+
+    @Override
+    public void removeReply(ReplyGrpcApi.UpdateReplyReq request, StreamObserver<Empty> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
+        try {
+            Post post = postService.getById(request.getReplyId());
+            // Check if the user has privilege to remove the post
+            if (post == null) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                        .withDescription("Resource does not exist").asException());
+                return;
+            }
+            String postUid = post.getUid();
+            if (postUid == null || !postUid.equals(uid)) {
+                responseObserver.onError(Status.PERMISSION_DENIED
+                        .withDescription("Not the owner of the resource").asException());
+                return;
+            }
+
+            if (!postService.hardRemove(request.getReplyId()))
+                throw new Exception("postService.hardRemove returned false");
         } catch (Exception e) {
             Sentry.captureException(e);
             responseObserver.onError(Status.INTERNAL
@@ -167,49 +206,11 @@ public abstract class PostController extends NotifController {
     }
 
     @Override
-    public void downvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        try {
-            if (!postService.downvote(request.getPostId()))
-                throw new Exception("postService.downvote returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
+    public void upvoteReply(ReplyGrpcApi.UpdateReplyReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: Implement this (with record)
     }
 
     @Override
-    public void toggleBestPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        // TODO: implement privilege control
-        try {
-            if (!postService.toggleBest(request.getPostId()))
-                throw new Exception("postService.toggleBest returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void toggleTopPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        // TODO: implement privilege control
-        try {
-            if (!postService.toggleTop(request.getPostId()))
-                throw new Exception("postService.toggleTop returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
+    public void downvoteReply(ReplyGrpcApi.UpdateReplyReq request, StreamObserver<Empty> responseObserver) {
     }
 }

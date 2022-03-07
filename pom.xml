@@ -133,6 +133,7 @@
                     <url>https://raw.githubusercontent.com/XMUMY/api/master/core/auth/v4/auth.proto</url>
                     <unpack>false</unpack>
                     <outputDirectory>${project.basedir}/src/main/proto/</outputDirectory>
+                    <skipCache>true</skipCache>
                 </configuration>
             </plugin>
 

@@ -7,11 +7,11 @@ import io.xdea.xmux.forum.dto.NotifGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.service.*;
 
-public abstract class NotifController extends GroupController {
+public abstract class NotifController extends ForumController {
     final protected NotifService notifService;
 
-    protected NotifController(GroupService groupService, NotifService notifService) {
-        super(groupService);
+    protected NotifController(ForumService forumService, NotifService notifService) {
+        super(forumService);
         this.notifService = notifService;
     }
 

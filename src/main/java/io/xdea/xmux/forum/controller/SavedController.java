@@ -8,12 +8,12 @@ import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.service.*;
 
-public abstract class SavedController extends ReplyController {
+public abstract class SavedController extends PostController {
     protected final SavedService savedService;
 
-    protected SavedController(GroupService groupService, NotifService notifService, PostService postService,
-                              ReplyService replyService, SavedService savedService) {
-        super(groupService, notifService, postService, replyService);
+    protected SavedController(ForumService forumService, NotifService notifService, ThreadService threadService,
+                              PostService postService, SavedService savedService) {
+        super(forumService, notifService, threadService, postService);
         this.savedService = savedService;
     }
 
