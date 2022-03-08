@@ -11,4 +11,6 @@ public interface PostExtMapper {
     List<Post> selectSaved(@Param("limit") int limit,
                            @Param("offset") int offset,
                            @Param("uid") String uid);
+
+    List<Post> selectTree(@Param("limit") int limit, @Param("startId") int startId);
 }

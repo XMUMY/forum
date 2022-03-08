@@ -43,6 +43,10 @@ public class PostService {
         return postMapper.selectByExample(postExample);
     }
 
+    public List<Post> getTree(int limit, Integer startPostId) {
+        return postExtMapper.selectTree(limit, startPostId);
+    }
+
     public List<Post> getUserPost(int pageNo, int pageSize, String uid) {
         var offset = pageNo * pageSize;
         final PostExample postExample = new PostExample();

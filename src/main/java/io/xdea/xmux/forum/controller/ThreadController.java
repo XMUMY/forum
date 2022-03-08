@@ -4,7 +4,6 @@ import io.sentry.Sentry;
 import io.xdea.xmux.forum.dto.PostGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
-import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.model.Thread;
 import io.xdea.xmux.forum.service.ForumService;
 import io.xdea.xmux.forum.service.NotifService;
@@ -112,7 +111,6 @@ public abstract class ThreadController extends NotifController {
         PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
         try {
             var threads = threadService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
-            // ASK: is there better way to avoid copying?
             threads.forEach(thread ->
                     respBuilder.addPd(buildPostDetails(thread))
             );

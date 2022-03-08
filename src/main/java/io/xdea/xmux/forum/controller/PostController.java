@@ -18,6 +18,7 @@ import io.xdea.xmux.forum.service.ThreadService;
 import io.xdea.xmux.forum.service.PostService;
 
 import java.util.Date;
+import java.util.Objects;
 
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
@@ -45,8 +46,9 @@ public abstract class PostController extends ThreadController {
     public void createReply(ReplyGrpcApi.CreateReplyReq request, StreamObserver<ReplyGrpcApi.CreateReplyResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         String refUid = null;
-        // When the post is to a thread, the post id == -1, post id != -1,
-        // When the post is to a post, both post and post id != -1.
+        Integer refPostId = null;
+        // When the post is to a thread, the post id == -1, thread id != -1,
+        // When the post is to a post, both post and thread id != -1.
         if (request.getRefReplyId() != -1) {
             Post refPost = postService.getById(request.getRefReplyId());
             if (refPost == null) {
@@ -55,7 +57,13 @@ public abstract class PostController extends ThreadController {
                 return;
             }
             refUid = refPost.getUid();
+            if (!refPost.getParentId().equals(-1)) {
+                // Means new post is lvl 1
+                // If parentId of refPost is not -1, means new post is lvl 2
+                refPostId = refPost.getRefPostId();
+            }
         } else {
+            // Referring to a thread, lvl 0
             Thread refThread = threadService.getById(request.getRefPostId());
             if (refThread == null) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
@@ -71,8 +79,10 @@ public abstract class PostController extends ThreadController {
                 .withContent(request.getContent())
                 .withPinned(false)
                 .withLike(0)
-                .withParentId(request.getRefReplyId())
                 .withThreadId(request.getRefPostId())
+                // differenciate lvl 1 & 2
+                .withRefPostId(Objects.requireNonNullElseGet(refPostId, request::getRefReplyId))
+                .withParentId(request.getRefReplyId())
                 .withRefPostUid(refUid);
 
         if (!postService.create(post))
