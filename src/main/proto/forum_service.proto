@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-option java_package = "io.xdea.xmux.forum.dto";
-option java_outer_classname = "ForumGrpcApi";
+package xmux.forum.v4;
 
 import "google/protobuf/empty.proto";
 import "group.proto";
@@ -9,40 +8,59 @@ import "post.proto";
 import "reply.proto";
 import "saved.proto";
 import "notif.proto";
-package xmux.forum.v4;
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "ForumGrpcApi";
 
 service Forum {
-  // Group
-  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
-  rpc RemoveGroup(GroupIdMsg) returns (google.protobuf.Empty);
-  rpc JoinGroup(MembershipMsg) returns (google.protobuf.Empty);
-  rpc LeaveGroup(MembershipMsg) returns (google.protobuf.Empty);
-  rpc GetGroups(GetGroupsReq) returns (GetGroupsResp);
-  rpc GetUserGroups(google.protobuf.Empty) returns (GetUserGroupsResp);
-  // Post
+  // Create a forum.
+  rpc CreateForum(CreateForumReq) returns (CreateForumResp);
+  // Remove a forum, including all threads and posts.
+  // Only admins/owner can remove the forum.
+  rpc RemoveForum(RemoveForumReq) returns (google.protobuf.Empty);
+  // Get forums that accessible to the user.
+  rpc GetForums(GetForumsReq) returns (GetForumsResp);
+
+  // Creat a thread under a forum.
+  rpc CreateThread(CreateThreadReq) returns (CreateThreadResp);
+  // Remove a thread, including all posts.
+  // Only admins/owner can remove the thread.
+  rpc RemoveThread(RemoveThreadReq) returns (google.protobuf.Empty);
+  // Update an existing thread.
+  rpc UpdateThread(UpdateThreadReq) returns (google.protobuf.Empty);
+  // Get threads under a forum.
+  rpc GetThreads(GetThreadsReq) returns (GetThreadsResp);
+  // Like/Dislike a thread.
+  rpc LikeThread(LikeThreadReq) returns (google.protobuf.Empty);
+  // Pin/unpin a thread.
+  rpc PinThread(PinThreadReq) returns (google.protobuf.Empty);
+  // Make thread a digest.
+  rpc DigestThread(DigestThreadReq) returns (google.protobuf.Empty);
+
+  // Creat a post under a thread.
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
-  rpc RemovePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc GetPost(GetPostReq) returns (GetPostResp);
-  rpc GetPostById(GetPostByIdReq) returns (PostDetails);
-  rpc UpvotePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc DownvotePost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc toggleBestPost(UpdatePostReq) returns (google.protobuf.Empty);
-  rpc toggleTopPost(UpdatePostReq) returns (google.protobuf.Empty);
-  // Reply
-  rpc CreateReply(CreateReplyReq) returns (CreateReplyResp);
-  rpc GetReply(GetReplyReq) returns (GetReplyResp);
-  rpc GetUserReply(GetUserReplyReq) returns (GetReplyResp);
-  rpc GetReplyById(GetReplyByIdReq) returns (Reply);
-  rpc RemoveReply(UpdateReplyReq) returns (google.protobuf.Empty);
-  rpc UpvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
-  rpc DownvoteReply(UpdateReplyReq) returns (google.protobuf.Empty);
-  // Saved
-  rpc SavePost(SaveReq) returns (SaveResp);
-  rpc SaveReply(SaveReq) returns (SaveResp);
-  rpc RemoveSavedPost(SaveReq) returns (google.protobuf.Empty);
-  rpc RemoveSavedReply(SaveReq) returns (google.protobuf.Empty);
-  rpc GetSavedPost(GetSavedReq) returns (GetPostResp);
-  rpc GetSavedReply(GetSavedReq) returns (GetReplyResp);
+  // Remove a post, including all children.
+  rpc RemoveReply(RemovePostReq) returns (google.protobuf.Empty);
+  // Get posts under a thread.
+  rpc GetPosts(GetPostsReq) returns (GetPostsResp);
+  // Like/Dislike a post.
+  rpc LikePost(LikePostReq) returns (google.protobuf.Empty);
+  // Pin/unpin a post.
+  rpc PinPost(PinPostReq) returns (google.protobuf.Empty);
+
+  // Save a thread.
+  rpc SaveThread(SaveThreadReq) returns (google.protobuf.Empty);
+  // Save a post.
+  rpc SavePost(SavePostReq) returns (google.protobuf.Empty);
+  // Unsave a thread
+  rpc UnsaveThread(UnsaveThreadReq) returns (google.protobuf.Empty);
+  // Unsave a post.
+  rpc UnsavePost(UnsavePostReq) returns (google.protobuf.Empty);
+  // Get saved threads.
+  rpc GetSavedThreads(GetSavedThreadsReq) returns (GetThreadsResp);
+  // Get saved posts.
+  rpc GetSavedPosts(GetSavedPostsReq) returns (GetPostsResp);
+
   // Notif
   rpc GetNotifNum(google.protobuf.Empty) returns (GetNotifNumResp);
   rpc GetNotif(GetNotifReq) returns (GetNotifResp);

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package xmux.forum.v4;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "GroupGrpcApi";
+
+message CreateForumReq {
+  string title = 1;
+  string description = 2;
+}
+
+message CreateForumResp {
+  int32 groupId = 1;
+}
+
+message RemoveForumReq {
+  int32 groupId = 1;
+}
+
+message GetForumsReq {
+  int32 from = 1;
+  int32 count = 2;
+}
+
+message GetForumsResp {
+  repeated Group groups = 1;
+}
+
+message Forum {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  string creatorUid = 4;
+}

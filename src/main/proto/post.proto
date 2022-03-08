@@ -1,49 +1,65 @@
 syntax = "proto3";
 
-option java_package = "io.xdea.xmux.forum.dto";
-option java_outer_classname = "PostGrpcApi";
-
-import "google/protobuf/timestamp.proto";
 package xmux.forum.v4;
 
+import "google/protobuf/timestamp.proto";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "ReplyGrpcApi";
+
+enum PostOrdering {
+  latest = 0;
+  oldest = 1;
+  likes = 2;
+}
+
 message CreatePostReq {
-  string title = 1;
-  string body = 2;
-  int32 groupId = 3;
+  int32 threadId = 1;
+  int32 parentId = 2;
+  int32 refPostId = 3;
+  string refPostUid = 4;
+  string content = 5;
 }
 
 message CreatePostResp {
   int32 postId = 1;
 }
 
-message GetPostReq {
-  int32 pageNo = 1;
-  int32 pageSize = 2;
-  repeated int32 groupIds = 3;
-  string uid = 4;
-}
-
-message GetPostByIdReq {
+message RemovePostReq {
   int32 postId = 1;
 }
 
-message GetPostResp {
-  repeated PostDetails pd = 1;
+message GetPostsReq {
+  int32 threadId = 1;
+  PostOrdering ordering = 2;
+  int32 cursor = 3;
+  int32 count = 4;
 }
 
-message UpdatePostReq {
-  int32 postId = 1;
+message GetPostsResp {
+  repeated Post posts = 1;
 }
 
-message PostDetails {
+message Post {
   int32 id = 1;
-  string title = 2;
-  string body = 3;
-  int32 vote = 4;
-  google.protobuf.Timestamp createTime = 5;
-  string uid = 6;
-  int32 groupId = 7;
-  bool topped = 8;
-  bool best = 9;
-  google.protobuf.Timestamp updateTime = 10;
+  string uid = 2;
+  int32 threadId = 3;
+  int32 parentId = 4;
+  int32 refPostId = 5;
+  string refPostUid = 6;
+  string content = 7;
+  int32 likes = 8;
+  bool pinned = 9;
+  google.protobuf.Timestamp createAt = 10;
+}
+
+message LikePostReq {
+  int32 postId = 1;
+  // + For like. - for dislike. 0 for cancel.
+  int32 like = 2;
+}
+
+message PinPostReq {
+  int32 postId = 1;
+  bool pinned = 2;
 }

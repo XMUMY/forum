@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package xmux.forum.v4;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "PostGrpcApi";
+
+enum ThreadOrdering {
+  lastUpdate = 0;
+  likes = 1;
+  posts = 2;
+}
+
+message CreateThreadReq {
+  int32 forumId = 1;
+  string title = 2;
+  string body = 3;
+}
+
+message CreateThreadResp {
+  int32 threadId = 1;
+}
+
+message RemoveThreadReq {
+  int32 threadId = 1;
+}
+
+message UpdateThreadReq {
+  int32 id = 1;
+  string title = 2;
+  string body = 3;
+}
+
+message GetThreadsReq {
+  int32 forumId = 1;
+  ThreadOrdering ordering = 2;
+  int32 cursor = 3;
+  int32 count = 4;
+}
+
+message GetThreadsResp {
+  repeated Thread threads = 1;
+}
+
+message Thread {
+  int32 id = 1;
+  string uid = 2;
+  string title = 3;
+  string body = 4;
+  int32 likes = 5;
+  bool pinned = 6;
+  bool digest = 7;
+  google.protobuf.Timestamp createAt = 8;
+  google.protobuf.Timestamp lastUpdate = 9;
+}
+
+message LikeThreadReq {
+  int32 threadId = 1;
+  // + For like. - for dislike. 0 for cancel.
+  int32 like = 2;
+}
+
+message PinThreadReq {
+  int32 threadId = 1;
+  bool pinned = 2;
+}
+
+message DigestThreadReq {
+  int32 threadId = 1;
+  bool digest = 2;
+}

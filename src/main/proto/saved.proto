@@ -5,15 +5,28 @@ option java_outer_classname = "SavedGrpcApi";
 
 package xmux.forum.v4;
 
-message SaveReq {
-  int32 refId = 1;
+message SaveThreadReq {
+  int32 threadId = 1;
 }
 
-message SaveResp {
-  bool alreadySaved = 1;
+message UnsaveThreadReq {
+  int32 threadId = 1;
 }
 
-message GetSavedReq {
-  int32 pageNo = 1;
-  int32 pageSize = 2;
+message SavePostReq {
+  int32 postId = 1;
+}
+
+message UnsavePostReq {
+  int32 postId = 1;
+}
+
+message GetSavedThreadsReq {
+  int32 cursor = 1;
+  int32 count = 2;
+}
+
+message GetSavedPostsReq {
+  int32 cursor = 1;
+  int32 count = 2;
 }
