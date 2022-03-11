@@ -4,10 +4,10 @@ package xmux.forum.v4;
 
 import "google/protobuf/empty.proto";
 import "forum.proto";
-import "post.proto";
-import "thread.proto";
-import "saved.proto";
-import "notif.proto";
+import "forum_post.proto";
+import "forum_thread.proto";
+import "forum_saved.proto";
+import "forum_notif.proto";
 
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "ForumServiceGrpcApi";
