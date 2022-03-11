@@ -48,9 +48,10 @@ message Thread {
   bool pinned = 6;
   bool digest = 7;
   google.protobuf.Timestamp createAt = 8;
-  // lastUpdate: latest activity, updateAt: latest modification
-  google.protobuf.Timestamp lastUpdate = 9;
+  // Last modification.
   google.protobuf.Timestamp updateAt = 10;
+  // Last activity.
+  google.protobuf.Timestamp lastUpdate = 9;
 }
 
 message LikeThreadReq {

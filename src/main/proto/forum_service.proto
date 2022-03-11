@@ -45,6 +45,8 @@ service Forum {
   rpc GetPosts(GetPostsReq) returns (GetPostsResp);
   // Get posts of a user.
   rpc GetPostsByUid(GetPostsByUidReq) returns (GetPostsResp);
+  // Get posts under another post.
+  rpc GetPostsByParent(GetPostsByParentReq) returns (GetPostsResp);
   // Like/Dislike a post.
   rpc LikePost(LikePostReq) returns (google.protobuf.Empty);
   // Pin/unpin a post.

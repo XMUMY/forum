@@ -6,9 +6,14 @@ option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "CommonGrpcApi";
 
 enum Ordering {
-  lastUpdate = 0;
+  // Order by latest activity (including publish/edit/post).
+  update = 0;
+  // Higher number of likes first.
   likes = 1;
+  // Higher number of posts first.
   posts = 2;
+  // Order by latest publish time.
   latest = 3;
+  // Order by oldest publish time.
   oldest = 4;
 }
