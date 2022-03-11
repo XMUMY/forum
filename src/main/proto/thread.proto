@@ -3,15 +3,10 @@ syntax = "proto3";
 package xmux.forum.v4;
 
 import "google/protobuf/timestamp.proto";
+import "common.proto";
 
 option java_package = "io.xdea.xmux.forum.dto";
-option java_outer_classname = "PostGrpcApi";
-
-enum ThreadOrdering {
-  lastUpdate = 0;
-  likes = 1;
-  posts = 2;
-}
+option java_outer_classname = "ThreadGrpcApi";
 
 message CreateThreadReq {
   int32 forumId = 1;
@@ -35,7 +30,7 @@ message UpdateThreadReq {
 
 message GetThreadsReq {
   int32 forumId = 1;
-  ThreadOrdering ordering = 2;
+  Ordering ordering = 2;
   int32 cursor = 3;
   int32 count = 4;
 }
@@ -53,7 +48,9 @@ message Thread {
   bool pinned = 6;
   bool digest = 7;
   google.protobuf.Timestamp createAt = 8;
+  // lastUpdate: latest activity, updateAt: latest modification
   google.protobuf.Timestamp lastUpdate = 9;
+  google.protobuf.Timestamp updateAt = 10;
 }
 
 message LikeThreadReq {

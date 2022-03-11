@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package xmux.forum.v4;
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "CommonGrpcApi";
+
+enum Ordering {
+  lastUpdate = 0;
+  likes = 1;
+  posts = 2;
+  latest = 3;
+  oldest = 4;
+}

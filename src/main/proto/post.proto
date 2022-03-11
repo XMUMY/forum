@@ -3,16 +3,13 @@ syntax = "proto3";
 package xmux.forum.v4;
 
 import "google/protobuf/timestamp.proto";
+import "common.proto";
 
 option java_package = "io.xdea.xmux.forum.dto";
-option java_outer_classname = "ReplyGrpcApi";
+option java_outer_classname = "PostGrpcApi";
 
-enum PostOrdering {
-  latest = 0;
-  oldest = 1;
-  likes = 2;
-}
-
+// lvl1 Post: parent = -1, refPostId = -1 / ref post id
+// lvl2 Post: parent = lvl1 post id, refPostId = direct ref post id
 message CreatePostReq {
   int32 threadId = 1;
   int32 parentId = 2;
@@ -31,7 +28,14 @@ message RemovePostReq {
 
 message GetPostsReq {
   int32 threadId = 1;
-  PostOrdering ordering = 2;
+  Ordering ordering = 2;
+  int32 cursor = 3;
+  int32 count = 4;
+}
+
+message GetPostsByUidReq {
+  string uid = 1;
+  Ordering ordering = 2;
   int32 cursor = 3;
   int32 count = 4;
 }

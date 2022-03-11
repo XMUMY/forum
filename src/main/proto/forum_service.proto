@@ -3,14 +3,14 @@ syntax = "proto3";
 package xmux.forum.v4;
 
 import "google/protobuf/empty.proto";
-import "group.proto";
+import "forum.proto";
 import "post.proto";
-import "reply.proto";
+import "thread.proto";
 import "saved.proto";
 import "notif.proto";
 
 option java_package = "io.xdea.xmux.forum.dto";
-option java_outer_classname = "ForumGrpcApi";
+option java_outer_classname = "ForumServiceGrpcApi";
 
 service Forum {
   // Create a forum.
@@ -40,9 +40,11 @@ service Forum {
   // Creat a post under a thread.
   rpc CreatePost(CreatePostReq) returns (CreatePostResp);
   // Remove a post, including all children.
-  rpc RemoveReply(RemovePostReq) returns (google.protobuf.Empty);
+  rpc RemovePost(RemovePostReq) returns (google.protobuf.Empty);
   // Get posts under a thread.
   rpc GetPosts(GetPostsReq) returns (GetPostsResp);
+  // Get posts of a user.
+  rpc GetPostsByUid(GetPostsByUidReq) returns (GetPostsResp);
   // Like/Dislike a post.
   rpc LikePost(LikePostReq) returns (google.protobuf.Empty);
   // Pin/unpin a post.
