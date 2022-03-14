@@ -121,7 +121,7 @@ public class ThreadService {
     }
 
     @Transactional
-    public boolean cancleVote(int threadId, String uid) {
+    public boolean cancelVote(int threadId, String uid) {
         final LikedThreadExample likedThreadExample = new LikedThreadExample();
         likedThreadExample.createCriteria().andThreadIdEqualTo(threadId).andUidEqualTo(uid);
         var oldLike = likedThreadMapper.selectByExample(likedThreadExample);

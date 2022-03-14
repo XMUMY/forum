@@ -13,4 +13,9 @@ public interface PostExtMapper {
                            @Param("uid") String uid);
 
     List<Post> selectTree(@Param("limit") int limit, @Param("startId") int startId);
+
+    int changeVote(@Param("id") int id, @Param("amount") int amount);
+
+    int togglePinned(@Param("id") int id);
+
 }

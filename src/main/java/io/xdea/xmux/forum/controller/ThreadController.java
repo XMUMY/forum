@@ -120,7 +120,7 @@ public abstract class ThreadController extends NotifController {
             if (!threadService.upvote(request.getThreadId(), uid))
                 throw new RuntimeException("threadService.upvote returned false");
         } else if (request.getLike() == 0) {
-            if (!threadService.cancleVote(request.getThreadId(), uid))
+            if (!threadService.cancelVote(request.getThreadId(), uid))
                 throw new RuntimeException("threadService.cancleVote returned false");
         } else {
             if (!threadService.downvote(request.getThreadId(), uid))
@@ -141,7 +141,7 @@ public abstract class ThreadController extends NotifController {
         }
 
         if (!threadService.togglePinned(request.getThreadId()))
-            throw new RuntimeException("postService.toggleTop returned false");
+            throw new RuntimeException("threadService.togglePinned returned false");
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }

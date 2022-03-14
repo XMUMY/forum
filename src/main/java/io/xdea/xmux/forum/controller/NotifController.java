@@ -32,7 +32,7 @@ public abstract class NotifController extends ForumController {
                 .setId(notif.getId())
                 .setTypeValue(notif.getType())
                 .setCreateTime(Timestamp.newBuilder()
-                        .setSeconds(notif.getCreateTime().getTime() / 1000))
+                        .setSeconds(notif.getCreateAt().getTime() / 1000))
                 .setHasRead(notif.getHasRead())
                 .setRefId(notif.getRefId())
                 .setObjId(notif.getObjId())

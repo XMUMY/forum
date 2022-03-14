@@ -45,4 +45,17 @@
         order by id
         limit #{limit}
     </select>
+
+    <update id="changeVote">
+        update forum.post
+        set "likes" = "likes" + #{amount}
+        where id = #{id}
+    </update>
+
+    <update id="togglePinned">
+        update forum.post
+        set pinned = not pinned
+        where id = #{id}
+    </update>
+
 </mapper>
