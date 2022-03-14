@@ -45,13 +45,13 @@
         where id = #{id}
     </update>
 
-    <update id="toggleBest">
+    <update id="toggleDigest">
         update forum.thread
         set digest = not digest
         where id = #{id}
     </update>
 
-    <update id="toggleTop">
+    <update id="togglePinned">
         update forum.thread
         set pinned = not pinned
         where id = #{id}

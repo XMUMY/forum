@@ -1,8 +1,7 @@
 package io.xdea.xmux.forum.controller;
 
-import io.sentry.Sentry;
-import io.xdea.xmux.forum.dto.PostGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
+import io.xdea.xmux.forum.dto.ThreadGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Thread;
 import io.xdea.xmux.forum.service.ForumService;
@@ -25,189 +24,129 @@ public abstract class ThreadController extends NotifController {
         this.threadService = threadService;
     }
 
-    private PostGrpcApi.PostDetails buildPostDetails(Thread thread) {
-        return PostGrpcApi.PostDetails.newBuilder()
+    private ThreadGrpcApi.Thread buildThread(Thread thread) {
+        return ThreadGrpcApi.Thread.newBuilder()
                 .setId(thread.getId())
-                .setCreateTime(Timestamp.newBuilder()
+                .setCreateAt(Timestamp.newBuilder()
                         .setSeconds(thread.getCreateAt().getTime() / 1000))
-                .setUpdateTime(Timestamp.newBuilder()
+                .setUpdateAt(Timestamp.newBuilder()
                         .setSeconds(thread.getUpdateAt().getTime() / 1000))
-                .setBest(thread.getDigest())
-                .setVote(thread.getLike())
-                .setGroupId(thread.getForumId())
-                .setTopped(thread.getPinned())
+                .setLastUpdate(Timestamp.newBuilder()
+                        // TODO: update attribute
+                        .setSeconds(thread.getUpdateAt().getTime() / 1000))
+                .setDigest(thread.getDigest())
+                .setLikes(thread.getLike())
+                .setPinned(thread.getPinned())
                 .setTitle(thread.getTitle())
                 .setBody(thread.getBody())
                 .setUid(thread.getUid()).build();
     }
 
     @Override
-    public void createPost(PostGrpcApi.CreatePostReq request,
-                           StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
+    public void createThread(ThreadGrpcApi.CreateThreadReq request, StreamObserver<ThreadGrpcApi.CreateThreadResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         Date nowTime = new Date();
         Thread thread = new Thread()
                 .withTitle(request.getTitle())
                 .withBody(request.getBody())
-                .withForumId(request.getGroupId())
+                .withForumId(request.getForumId())
                 .withUid(uid)
                 .withCreateAt(nowTime)
+                // TODO: add lastUpdate
                 .withUpdateAt(nowTime)
                 .withLike(0)
                 .withDigest(false)
                 .withPinned(false);
-        try {
-            if (!threadService.create(thread))
-                throw new Exception("postService.create returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        var resp = PostGrpcApi.CreatePostResp
-                .newBuilder().setPostId(thread.getId()).build();
+
+        if (!threadService.create(thread))
+            throw new RuntimeException("threadService.create returned false");
+
+        var resp = ThreadGrpcApi.CreateThreadResp
+                .newBuilder().setThreadId(thread.getId()).build();
         responseObserver.onNext(resp);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void removePost(PostGrpcApi.UpdatePostReq request,
-                           StreamObserver<Empty> responseObserver) {
+    public void removeThread(ThreadGrpcApi.RemoveThreadReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: remove posts under it
         String uid = AuthInterceptor.UID.get();
-        try {
-            Thread thread = threadService.getById(request.getPostId());
-            // Check if the user has privilege to remove the thread
-            if (thread == null) {
-                responseObserver.onError(Status.INVALID_ARGUMENT
-                        .withDescription("Post does not exist").asException());
-                return;
-            }
-            String threadUid = thread.getUid();
-            if (threadUid == null || !threadUid.equals(uid)) {
-                responseObserver.onError(Status.PERMISSION_DENIED
-                        .withDescription("Not the owner of the thread").asException());
-                return;
-            }
-
-            if (!threadService.hardRemove(request.getPostId()))
-                throw new Exception("postService.hardRemove returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
+        Thread thread = threadService.getById(request.getThreadId());
+        // Check if the user has privilege to remove the thread
+        if (thread == null) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Post does not exist").asException());
             return;
         }
+        String threadUid = thread.getUid();
+        if (threadUid == null || !threadUid.equals(uid)) {
+            responseObserver.onError(Status.PERMISSION_DENIED
+                    .withDescription("Not the owner of the thread").asException());
+            return;
+        }
+
+        if (!threadService.hardRemove(request.getThreadId()))
+            throw new RuntimeException("threadService.hardRemove returned false");
+
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getPost(PostGrpcApi.GetPostReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
-        List<Integer> groupIdsList = request.getGroupIdsList();
-        if (groupIdsList.size() == 0)
-            groupIdsList = null;
-        String uid = request.getUid().equals("") ? null : request.getUid();
-        PostGrpcApi.GetPostResp.Builder respBuilder = PostGrpcApi.GetPostResp.newBuilder();
-        try {
-            var threads = threadService.get(request.getPageNo(), request.getPageSize(), groupIdsList, uid);
-            threads.forEach(thread ->
-                    respBuilder.addPd(buildPostDetails(thread))
-            );
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
+    public void updateThread(ThreadGrpcApi.UpdateThreadReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: impl
+    }
+
+    @Override
+    public void getThreads(ThreadGrpcApi.GetThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
+        int forumId = request.getForumId();
+        final var respBuilder = ThreadGrpcApi.GetThreadsResp.newBuilder();
+        var threads = threadService.get(request.getCursor(), request.getCount(), forumId);
+        threads.forEach(thread ->
+                respBuilder.addThreads(buildThread(thread))
+        );
 
         responseObserver.onNext(respBuilder.build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getPostById(PostGrpcApi.GetPostByIdReq request, StreamObserver<PostGrpcApi.PostDetails> responseObserver) {
-        Thread thread = threadService.getById(request.getPostId());
-        if (thread == null) {
-            responseObserver.onError(Status.NOT_FOUND
-                    .withDescription("Resource not found").asException());
-            return;
-        }
-        responseObserver.onNext(buildPostDetails(thread));
+    public void likeThread(ThreadGrpcApi.LikeThreadReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: Fix
+        if (!threadService.upvote(request.getThreadId()))
+            throw new RuntimeException("postService.upvote returned false");
+        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getSavedPost(SavedGrpcApi.GetSavedReq request, StreamObserver<PostGrpcApi.GetPostResp> responseObserver) {
+    public void pinThread(ThreadGrpcApi.PinThreadReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: implement privilege control
+        if (!threadService.togglePinned(request.getThreadId()))
+            throw new RuntimeException("postService.toggleTop returned false");
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void digestThread(ThreadGrpcApi.DigestThreadReq request, StreamObserver<Empty> responseObserver) {
+        // TODO: implement privilege control
+        if (!threadService.toggleDigest(request.getThreadId()))
+            throw new RuntimeException("threadService.toggleDigest returned false");
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getSavedThreads(SavedGrpcApi.GetSavedThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        List<Thread> saved = threadService.getSaved(request.getPageNo(), request.getPageSize(), uid);
-        PostGrpcApi.GetPostResp.Builder builder = PostGrpcApi.GetPostResp.newBuilder();
+        // TODO: change paging
+        List<Thread> saved = threadService.getSaved(request.getCursor(), request.getCount(), uid);
+        final var builder = ThreadGrpcApi.GetThreadsResp.newBuilder();
         saved.forEach(thread -> {
-            builder.addPd(buildPostDetails(thread));
+            builder.addThreads(buildThread(thread));
         });
         responseObserver.onNext(builder.build());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void upvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        try {
-            if (!threadService.upvote(request.getPostId()))
-                throw new Exception("postService.upvote returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void downvotePost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        try {
-            if (!threadService.downvote(request.getPostId()))
-                throw new Exception("postService.downvote returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void toggleBestPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        // TODO: implement privilege control
-        try {
-            if (!threadService.toggleBest(request.getPostId()))
-                throw new Exception("postService.toggleBest returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void toggleTopPost(PostGrpcApi.UpdatePostReq request, StreamObserver<Empty> responseObserver) {
-        // TODO: implement privilege control
-        try {
-            if (!threadService.toggleTop(request.getPostId()))
-                throw new Exception("postService.toggleTop returned false");
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("DB error").asException());
-            return;
-        }
-        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }

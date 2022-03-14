@@ -65,11 +65,11 @@ public class ThreadService {
         return threadExtMapper.decVote(id) == 1;
     }
 
-    public boolean toggleBest(int id) {
-        return threadExtMapper.toggleBest(id) == 1;
+    public boolean toggleDigest(int id) {
+        return threadExtMapper.toggleDigest(id) == 1;
     }
 
-    public boolean toggleTop(int id) {
-        return threadExtMapper.toggleTop(id) == 1;
+    public boolean togglePinned(int id) {
+        return threadExtMapper.togglePinned(id) == 1;
     }
 }

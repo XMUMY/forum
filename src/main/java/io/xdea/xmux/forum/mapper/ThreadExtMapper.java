@@ -18,7 +18,7 @@ public interface ThreadExtMapper {
 
     int decVote(@Param("id") int id);
 
-    int toggleBest(@Param("id") int id);
+    int toggleDigest(@Param("id") int id);
 
-    int toggleTop(@Param("id") int id);
+    int togglePinned(@Param("id") int id);
 }
