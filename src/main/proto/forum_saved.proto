@@ -22,11 +22,11 @@ message UnsavePostReq {
 }
 
 message GetSavedThreadsReq {
-  int32 cursor = 1;
+  int32 offset = 1;
   int32 count = 2;
 }
 
 message GetSavedPostsReq {
-  int32 cursor = 1;
+  int32 offset = 1;
   int32 count = 2;
 }
