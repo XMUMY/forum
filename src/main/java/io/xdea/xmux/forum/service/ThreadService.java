@@ -74,6 +74,10 @@ public class ThreadService {
         return threadExtMapper.setUpdateTimeToNow(id) == 1;
     }
 
+    public boolean changePostsNo(int id, int amount) {
+        return threadExtMapper.changePostsNo(id, amount) == 1;
+    }
+
     @Transactional
     public boolean upvote(int threadId, String uid) {
         int amount = 1;
@@ -147,7 +151,9 @@ public class ThreadService {
     }
 
     public boolean update(int id, String title, String body) {
+        final Date nowTime = new Date();
         return threadMapper.updateByPrimaryKeySelective(new Thread()
-                .withId(id).withTitle(title).withBody(body).withUpdateAt(new Date())) == 1;
+                .withId(id).withTitle(title).withBody(body)
+                .withUpdateAt(nowTime).withLastUpdate(nowTime)) == 1;
     }
 }

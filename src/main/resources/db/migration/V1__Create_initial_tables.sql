@@ -26,6 +26,7 @@ CREATE TABLE forum."thread" (
                           "update_at" timestamp,
                           "last_update" timestamp,
                           "likes" INT DEFAULT 0,
+                          "posts" INT DEFAULT 0,
                           "pinned" BOOLEAN DEFAULT FALSE,
                           "digest" BOOLEAN DEFAULT FALSE
 );

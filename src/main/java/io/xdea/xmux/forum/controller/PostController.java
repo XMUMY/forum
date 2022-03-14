@@ -15,6 +15,7 @@ import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ThreadService;
 
 import java.util.Date;
+import java.util.List;
 
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
@@ -67,7 +68,6 @@ public abstract class PostController extends ThreadController {
                 .withParentId(request.getParentId())
                 .withRefPostUid(request.getRefPostUid());
 
-        // TODO: add post count
         if (!postService.create(post))
             throw new RuntimeException("postService.create returned false");
 
@@ -130,7 +130,7 @@ public abstract class PostController extends ThreadController {
         }
 
         // Remove post and also its children
-        if (!postService.hardRemove(request.getPostId()))
+        if (!postService.hardRemove(request.getPostId(), post.getThreadId()))
             throw new RuntimeException("postService.hardRemove returned false");
 
         responseObserver.onNext(Empty.getDefaultInstance());
@@ -152,6 +152,16 @@ public abstract class PostController extends ThreadController {
         String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
+        posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
+
+        responseObserver.onNext(respBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+        final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
+        final List<Post> posts = postService.getTree(request.getCount(), request.getParentId(), request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());

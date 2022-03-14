@@ -14,6 +14,8 @@ public interface ThreadExtMapper {
 
     int setUpdateTimeToNow(@Param("id") int id);
 
+    int changePostsNo(@Param("id") int id, @Param("amount") int amount);
+
     int changeVote(@Param("id") int id, @Param("amount") int amount);
 
     int toggleDigest(@Param("id") int id);

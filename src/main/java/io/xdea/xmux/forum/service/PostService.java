@@ -33,6 +33,7 @@ public class PostService {
     @Transactional
     public boolean create(Post post) {
         threadService.renewUpdateTime(post.getThreadId());
+        threadService.changePostsNo(post.getThreadId(), 1);
         return postMapper.insert(post) == 1;
     }
 
@@ -41,11 +42,13 @@ public class PostService {
     }
 
     @Transactional
-    public boolean hardRemove(int postId) {
+    public boolean hardRemove(int postId, int postThreadId) {
         final PostExample postExample = new PostExample();
         postExample.createCriteria().andParentIdEqualTo(postId);
-        postMapper.deleteByExample(postExample);
-        return postMapper.deleteByPrimaryKey(postId) == 1;
+        final int deleteNo = postMapper.deleteByExample(postExample);
+        final int selfDelNo = postMapper.deleteByPrimaryKey(postId);
+        threadService.changePostsNo(postThreadId, -(deleteNo + selfDelNo));
+        return selfDelNo == 1;
     }
 
     public List<Post> get(int offset, int count, Integer threadId, int orderMethod) {
@@ -57,8 +60,8 @@ public class PostService {
         return postMapper.selectByExample(postExample);
     }
 
-    public List<Post> getTree(int limit, Integer startPostId) {
-        return postExtMapper.selectTree(limit, startPostId);
+    public List<Post> getTree(int limit, Integer startPostId, int ordering) {
+        return postExtMapper.selectTree(limit, startPostId, orderStr[ordering]);
     }
 
     public List<Post> getUserPost(int offset, int count, String uid, int ordering) {
