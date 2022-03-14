@@ -5,6 +5,7 @@ import io.xdea.xmux.forum.mapper.PostExtMapper;
 import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.model.PostExample;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +14,13 @@ import java.util.List;
 public class PostService {
     private final PostMapper postMapper;
     private final PostExtMapper postExtMapper;
-    static private final String[] orderStr = {"create_at desc", "create_at asc", "like desc"};
+    private final String[] orderStr;
 
     @Autowired
-    public PostService(PostMapper postMapper, PostExtMapper postExtMapper) {
+    public PostService(PostMapper postMapper, PostExtMapper postExtMapper, @Qualifier("orderingStrList") String[] orderStr) {
         this.postMapper = postMapper;
         this.postExtMapper = postExtMapper;
+        this.orderStr = orderStr;
     }
 
     public boolean create(Post post) {
@@ -57,8 +59,7 @@ public class PostService {
         return postMapper.selectByExample(postExample);
     }
 
-    public List<Post> getSaved(int pageNo, int pageSize, String uid) {
-        var offset = pageNo * pageSize;
-        return postExtMapper.selectSaved(pageSize, offset, uid);
+    public List<Post> getSaved(int offset, int count, String uid) {
+        return postExtMapper.selectSaved(count, offset, uid);
     }
 }

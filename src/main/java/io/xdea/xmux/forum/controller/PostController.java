@@ -143,7 +143,7 @@ public abstract class PostController extends ThreadController {
     public void getSavedPosts(SavedGrpcApi.GetSavedPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        var posts = postService.getSaved(request.getCursor(), request.getCount(), uid);
+        var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());

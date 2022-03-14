@@ -24,7 +24,8 @@ CREATE TABLE forum."thread" (
                           "body" TEXT,
                           "create_at" timestamp,
                           "update_at" timestamp,
-                          "like" INT DEFAULT 0,
+                          "last_update" timestamp,
+                          "likes" INT DEFAULT 0,
                           "pinned" BOOLEAN DEFAULT FALSE,
                           "digest" BOOLEAN DEFAULT FALSE
 );
@@ -32,6 +33,7 @@ CREATE TABLE forum."thread" (
 CREATE TABLE forum."post" (
                         "id" SERIAL PRIMARY KEY,
                         "uid" TEXT,
+                        "forum_id" INT NOT NULL,
                         "thread_id" INT NOT NULL,
                         "parent_id" INT NOT NULL DEFAULT (-1),
                         "ref_post_id" INT NOT NULL DEFAULT (-1),
@@ -39,7 +41,7 @@ CREATE TABLE forum."post" (
                         "content" TEXT,
                         "create_at" timestamp,
                         "update_at" timestamp,
-                        "like" INT DEFAULT 0,
+                        "likes" INT DEFAULT 0,
                         "pinned" BOOLEAN DEFAULT FALSE
 );
 
@@ -61,7 +63,7 @@ CREATE TABLE forum."liked_thread" (
                                 "id" SERIAL PRIMARY KEY,
                                 "uid" TEXT NOT NULL,
                                 "thread_id" INT NOT NULL,
-                                "like" BOOLEAN DEFAULT TRUE,
+                                "liked" BOOLEAN DEFAULT TRUE,
                                 "create_at" timestamp
 );
 
@@ -69,20 +71,20 @@ CREATE TABLE forum."liked_post" (
                               "id" SERIAL PRIMARY KEY,
                               "uid" TEXT NOT NULL,
                               "post_id" INT NOT NULL,
-                              "like" BOOLEAN DEFAULT TRUE,
+                              "liked" BOOLEAN DEFAULT TRUE,
                               "create_at" timestamp
 );
 
 CREATE TABLE forum."notif" (
                          "id" SERIAL PRIMARY KEY,
-                         "create_time" timestamp NOT NULL,
+                         "create_at" timestamp NOT NULL,
                          "uid" TEXT NOT NULL,
                          "sender_uid" TEXT NOT NULL,
+                         "has_read" BOOLEAN NOT NULL,
                          "type" INT NOT NULL,
                          "ref_id" INT NOT NULL,
                          "obj_id" INT NOT NULL,
-                         "value" INT,
-                         "has_read" BOOLEAN NOT NULL
+                         "value" INT
 );
 
 ALTER TABLE forum."thread" ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");

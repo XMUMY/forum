@@ -8,15 +8,13 @@ import java.util.List;
 
 @Mapper
 public interface ThreadExtMapper {
-    List<Thread> selectSaved(@Param("limit") int limit,
-                             @Param("offset") int offset,
+    List<Thread> selectSaved(@Param("offset") int offset,
+                             @Param("count") int count,
                              @Param("uid") String uid);
 
     int setUpdateTimeToNow(@Param("id") int id);
 
-    int incVote(@Param("id") int id);
-
-    int decVote(@Param("id") int id);
+    int changeVote(@Param("id") int id, @Param("amount") int amount);
 
     int toggleDigest(@Param("id") int id);
 
