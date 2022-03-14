@@ -29,21 +29,21 @@ message RemovePostReq {
 message GetPostsReq {
   int32 threadId = 1;
   Ordering ordering = 2;
-  int32 cursor = 3;
+  int32 offset = 3;
   int32 count = 4;
 }
 
 message GetPostsByUidReq {
   string uid = 1;
   Ordering ordering = 2;
-  int32 cursor = 3;
+  int32 offset = 3;
   int32 count = 4;
 }
 
 message GetPostsByParentReq {
   int32 parentId = 1;
   Ordering ordering = 2;
-  int32 cursor = 3;
+  int32 offset = 3;
   int32 count = 4;
 }
 

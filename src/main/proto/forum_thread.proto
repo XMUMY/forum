@@ -31,7 +31,7 @@ message UpdateThreadReq {
 message GetThreadsReq {
   int32 forumId = 1;
   Ordering ordering = 2;
-  int32 cursor = 3;
+  int32 offset = 3;
   int32 count = 4;
 }
 
