@@ -62,6 +62,10 @@ message Post {
   int32 likes = 8;
   bool pinned = 9;
   google.protobuf.Timestamp createAt = 10;
+  // + For like. - for dislike. 0 for cancel.
+  int32 liked = 11;
+  // Whether current thread is saved by user.
+  bool saved = 12;
 }
 
 message LikePostReq {

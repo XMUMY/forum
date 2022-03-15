@@ -49,9 +49,13 @@ message Thread {
   bool digest = 7;
   google.protobuf.Timestamp createAt = 8;
   // Last modification.
-  google.protobuf.Timestamp updateAt = 10;
+  google.protobuf.Timestamp updateAt = 9;
   // Last activity.
-  google.protobuf.Timestamp lastUpdate = 9;
+  google.protobuf.Timestamp lastUpdate = 10;
+  // + For like. - for dislike. 0 for cancel.
+  int32 liked = 11;
+  // Whether current thread is saved by user.
+  bool saved = 12;
 }
 
 message LikeThreadReq {
