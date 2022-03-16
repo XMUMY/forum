@@ -4,6 +4,7 @@ import io.xdea.xmux.forum.mapper.LikedPostMapper;
 import io.xdea.xmux.forum.mapper.PostMapper;
 import io.xdea.xmux.forum.mapper.PostExtMapper;
 import io.xdea.xmux.forum.model.*;
+import io.xdea.xmux.forum.model.Thread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,11 @@ public class PostService {
 
     @Transactional
     public boolean create(Post post) {
-        threadService.renewUpdateTime(post.getThreadId());
-        threadService.changePostsNo(post.getThreadId(), 1);
+        final Integer threadId = post.getThreadId();
+        final Thread belongThread = threadService.getById(threadId);
+        post.setForumId(belongThread.getForumId());
+        threadService.renewUpdateTime(threadId);
+        threadService.changePostsNo(threadId, 1);
         return postMapper.insert(post) == 1;
     }
 

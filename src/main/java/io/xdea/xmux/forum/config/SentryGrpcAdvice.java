@@ -9,6 +9,7 @@ import net.devh.boot.grpc.server.advice.GrpcExceptionHandler;
 public class SentryGrpcAdvice {
     @GrpcExceptionHandler(Exception.class)
     public Status handleAllException(Exception e) {
+        e.printStackTrace();
         Sentry.captureException(e);
         return Status.INTERNAL.withDescription("Unknown error").withCause(e);
     }

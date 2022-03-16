@@ -26,6 +26,6 @@ public class GeneralConfig {
 
     @Bean
     public String[] orderingStrList() {
-        return new String[]{"update_at desc", "likes desc", "posts desc", "last_update desc", "create_at asc"};
+        return new String[]{"last_update desc", "likes desc", "posts desc", "create_at desc", "create_at asc"};
     }
 }
