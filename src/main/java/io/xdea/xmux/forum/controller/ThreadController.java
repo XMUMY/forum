@@ -5,6 +5,7 @@ import io.xdea.xmux.forum.dto.ThreadGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Forum;
 import io.xdea.xmux.forum.model.Thread;
+import io.xdea.xmux.forum.model.ThreadWithInfo;
 import io.xdea.xmux.forum.service.ForumService;
 import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.ThreadService;
@@ -14,7 +15,6 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Date;
-import java.util.List;
 
 public abstract class ThreadController extends NotifController {
 
@@ -25,7 +25,7 @@ public abstract class ThreadController extends NotifController {
         this.threadService = threadService;
     }
 
-    private ThreadGrpcApi.Thread buildThread(Thread thread) {
+    private ThreadGrpcApi.Thread buildThread(ThreadWithInfo thread) {
         return ThreadGrpcApi.Thread.newBuilder()
                 .setId(thread.getId())
                 .setCreateAt(Timestamp.newBuilder()
@@ -39,7 +39,9 @@ public abstract class ThreadController extends NotifController {
                 .setPinned(thread.getPinned())
                 .setTitle(thread.getTitle())
                 .setBody(thread.getBody())
-                .setUid(thread.getUid()).build();
+                .setUid(thread.getUid())
+                .setLiked(thread.getLiked())
+                .setSaved(thread.getSaved()).build();
     }
 
     @Override
@@ -102,9 +104,10 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void getThreads(ThreadGrpcApi.GetThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
         int forumId = request.getForumId();
         final var respBuilder = ThreadGrpcApi.GetThreadsResp.newBuilder();
-        var threads = threadService.get(request.getOffset(), request.getCount(), forumId, request.getOrderingValue());
+        var threads = threadService.get(request.getOffset(), request.getCount(), forumId, uid, request.getOrderingValue());
         threads.forEach(thread ->
                 respBuilder.addThreads(buildThread(thread))
         );
@@ -165,7 +168,7 @@ public abstract class ThreadController extends NotifController {
     @Override
     public void getSavedThreads(SavedGrpcApi.GetSavedThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
-        List<Thread> saved = threadService.getSaved(request.getOffset(), request.getCount(), uid);
+        final var saved = threadService.getSaved(request.getOffset(), request.getCount(), uid);
         final var builder = ThreadGrpcApi.GetThreadsResp.newBuilder();
         saved.forEach(thread -> {
             builder.addThreads(buildThread(thread));

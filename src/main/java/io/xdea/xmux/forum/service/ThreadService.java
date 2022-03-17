@@ -43,16 +43,11 @@ public class ThreadService {
         return threadMapper.selectByPrimaryKey(id);
     }
 
-    public List<Thread> get(int offset, int count, int forumId, int ordering) {
-        final ThreadExample threadExample = new ThreadExample();
-        threadExample.setLimit(count);
-        threadExample.setOffset(offset);
-        threadExample.setOrderByClause(orderStr[ordering]);
-        threadExample.createCriteria().andForumIdEqualTo(forumId);
-        return threadMapper.selectByExample(threadExample);
+    public List<ThreadWithInfo> get(int offset, int count, int forumId, String uid, int ordering) {
+        return threadExtMapper.select(offset, count, forumId, uid, orderStr[ordering]);
     }
 
-    public List<Thread> getSaved(int offset, int count, String uid) {
+    public List<ThreadWithInfo> getSaved(int offset, int count, String uid) {
         return threadExtMapper.selectSaved(offset, count, uid);
     }
 
