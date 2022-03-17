@@ -25,7 +25,7 @@ public class ForumService {
     }
 
     public boolean create(Forum forum) {
-        return forumMapper.insert(forum) == 1;
+        return forumMapper.insertSelective(forum) == 1;
     }
 
     public List<Forum> get(int page, int numPerPage) {
@@ -56,7 +56,7 @@ public class ForumService {
                 .withCreateAt(new Date())
                 .withUid(uid)
                 .withForumId(forumId);
-        return memberMapper.insert(member) == 1;
+        return memberMapper.insertSelective(member) == 1;
     }
 
     public boolean removeMembership(String uid, int forumId) {

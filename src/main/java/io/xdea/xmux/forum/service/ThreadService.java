@@ -35,7 +35,7 @@ public class ThreadService {
     }
 
     public boolean create(Thread thread) {
-        int insert = threadMapper.insert(thread);
+        int insert = threadMapper.insertSelective(thread);
         return insert == 1;
     }
 
@@ -90,7 +90,7 @@ public class ThreadService {
                 amount = 0;
             }
         } else {
-            likedThreadMapper.insert(new LikedThread().withThreadId(threadId)
+            likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
                     .withUid(uid).withLiked(true).withCreateAt(new Date()));
         }
         return threadExtMapper.changeVote(threadId, amount) == 1;
@@ -113,7 +113,7 @@ public class ThreadService {
                 amount = 0;
             }
         } else {
-            likedThreadMapper.insert(new LikedThread().withThreadId(threadId)
+            likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
                     .withUid(uid).withLiked(false).withCreateAt(new Date()));
         }
         return threadExtMapper.changeVote(threadId, amount) == 1;

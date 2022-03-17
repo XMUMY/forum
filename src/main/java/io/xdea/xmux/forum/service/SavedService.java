@@ -35,14 +35,14 @@ public class SavedService {
     }
 
     public boolean saveThread(String uid, int threadId) {
-        return savedThreadMapper.insert(new SavedThread()
+        return savedThreadMapper.insertSelective(new SavedThread()
                 .withCreateAt(new Date())
                 .withThreadId(threadId)
                 .withUid(uid)) == 1;
     }
 
     public boolean savePost(String uid, int postId) {
-        return savedPostMapper.insert(new SavedPost()
+        return savedPostMapper.insertSelective(new SavedPost()
                 .withCreateAt(new Date())
                 .withPostId(postId)
                 .withUid(uid)) == 1;

@@ -40,6 +40,6 @@ public class NotifService {
     }
 
     public boolean createNotif(Notif notif) {
-        return notifMapper.insert(notif) == 1;
+        return notifMapper.insertSelective(notif) == 1;
     }
 }

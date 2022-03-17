@@ -38,7 +38,7 @@ public class PostService {
         post.setForumId(belongThread.getForumId());
         threadService.renewUpdateTime(threadId);
         threadService.changePostsNo(threadId, 1);
-        return postMapper.insert(post) == 1;
+        return postMapper.insertSelective(post) == 1;
     }
 
     public Post getById(int postId) {
@@ -88,7 +88,7 @@ public class PostService {
                 amount = 0;
             }
         } else {
-            likedPostMapper.insert(new LikedPost().withPostId(postId)
+            likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
                     .withUid(uid).withLiked(true).withCreateAt(new Date()));
         }
         return postExtMapper.changeVote(postId, amount) == 1;
@@ -111,7 +111,7 @@ public class PostService {
                 amount = 0;
             }
         } else {
-            likedPostMapper.insert(new LikedPost().withPostId(postId)
+            likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
                     .withUid(uid).withLiked(true).withCreateAt(new Date()));
         }
         return postExtMapper.changeVote(postId, amount) == 1;
