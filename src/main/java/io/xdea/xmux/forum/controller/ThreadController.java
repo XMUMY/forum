@@ -58,6 +58,7 @@ public abstract class ThreadController extends NotifController {
                 .withLastUpdate(nowTime)
                 .withUpdateAt(nowTime)
                 .withLikes(0)
+                .withPosts(0)
                 .withDigest(false)
                 .withPinned(false);
 
