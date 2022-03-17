@@ -41,7 +41,8 @@ public abstract class ThreadController extends NotifController {
                 .setBody(thread.getBody())
                 .setUid(thread.getUid())
                 .setLiked(thread.getLiked())
-                .setSaved(thread.getSaved()).build();
+                .setSaved(thread.getSaved())
+                .setPosts(thread.getPosts()).build();
     }
 
     @Override
