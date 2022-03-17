@@ -66,22 +66,14 @@
     </select>
 
     <select id="select" resultMap="BaseWithInfo">
-        with childposts as (
-            select subposts.*
-            from forum.post p
-                     join lateral (
+        with lvlOnePosts as (
             select *
-            from forum.post sp
-            where sp.parent_id = p.id
-            order by sp.id asc
-            limit 3
-        ) subposts
-        on true
-        where p.thread_id = #{threadId}
-          and p.parent_id
-         &lt; 1
-        order by p.${ordering}
-        limit #{count} offset #{offset} )
+            from forum.post
+            where thread_id = #{threadId}
+              and parent_id &lt; 1
+            order by ${ordering}
+            limit #{count} offset #{offset}
+        )
         select allpost.*,
                case
                    when l.liked is null then 0
@@ -91,14 +83,17 @@
                    when s.id is null then false
                    else true end as saved
         from (select *
-              from childposts
+              from lvlOnePosts
               union
-              (select *
+              (select lvlTwoPosts.*
+               from lvlOnePosts p1
+                        join lateral (
+               select *
                from forum.post p
-               where p.thread_id = #{threadId}
-                 and p.parent_id &lt; 1
-               order by p.${ordering}
-               limit #{count} offset #{offset})) as allpost
+               where p.parent_id = p1.id
+               order by p.id asc
+               limit 3 ) lvlTwoPosts
+               on true)) allpost
                  left join forum.saved_post s on s.post_id = allpost.id and s.uid = #{uid}
                  left join forum.liked_post l
                            on l.post_id = allpost.id and l.uid = #{uid}
