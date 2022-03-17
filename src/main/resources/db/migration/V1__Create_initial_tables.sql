@@ -90,17 +90,22 @@ CREATE TABLE forum."notif" (
 
 ALTER TABLE forum."thread" ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");
 
-ALTER TABLE forum."post" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+ALTER TABLE forum."post" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id")
+    ON DELETE CASCADE;
 
 ALTER TABLE forum."member" ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");
 
-ALTER TABLE forum."saved_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+ALTER TABLE forum."saved_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id")
+    ON DELETE CASCADE;
 
-ALTER TABLE forum."saved_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id");
+ALTER TABLE forum."saved_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id")
+    ON DELETE CASCADE;
 
-ALTER TABLE forum."liked_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id");
+ALTER TABLE forum."liked_thread" ADD FOREIGN KEY ("thread_id") REFERENCES forum."thread" ("id")
+    ON DELETE CASCADE;
 
-ALTER TABLE forum."liked_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id");
+ALTER TABLE forum."liked_post" ADD FOREIGN KEY ("post_id") REFERENCES forum."post" ("id")
+    ON DELETE CASCADE;
 
 COMMENT ON COLUMN forum."notif".sender_uid IS 'The uid of notification sender';
 COMMENT ON COLUMN forum."notif".type IS 'The type values refer to notif.proto';
