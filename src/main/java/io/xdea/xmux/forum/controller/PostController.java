@@ -8,6 +8,7 @@ import io.xdea.xmux.forum.dto.PostGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Post;
+import io.xdea.xmux.forum.model.PostWithInfo;
 import io.xdea.xmux.forum.model.Thread;
 import io.xdea.xmux.forum.service.ForumService;
 import io.xdea.xmux.forum.service.NotifService;
@@ -15,7 +16,6 @@ import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ThreadService;
 
 import java.util.Date;
-import java.util.List;
 
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
@@ -25,7 +25,7 @@ public abstract class PostController extends ThreadController {
         this.postService = postService;
     }
 
-    private PostGrpcApi.Post buildPost(Post post) {
+    private PostGrpcApi.Post buildPost(PostWithInfo post) {
         return PostGrpcApi.Post.newBuilder()
                 .setId(post.getId())
                 .setCreateAt(Timestamp.newBuilder()
@@ -37,14 +37,17 @@ public abstract class PostController extends ThreadController {
                 .setParentId(post.getParentId())
                 .setRefPostUid(post.getRefPostUid() == null ? "" : post.getRefPostUid())
                 .setThreadId(post.getThreadId())
-                .setRefPostId(post.getRefPostId()).build();
+                .setRefPostId(post.getRefPostId())
+                .setLiked(post.getLiked())
+                .setSaved(post.getSaved()).build();
     }
 
     @Override
     public void getPosts(PostGrpcApi.GetPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+        String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         var posts = postService.get(request.getOffset(), request.getCount(),
-                request.getThreadId(), request.getOrderingValue());
+                request.getThreadId(), uid, request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());
@@ -151,7 +154,7 @@ public abstract class PostController extends ThreadController {
     public void getSavedPosts(SavedGrpcApi.GetSavedPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
         String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
+        final var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());
@@ -160,8 +163,10 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+        // TODO: clearify useage of this API
+        String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        final List<Post> posts = postService.getTree(request.getCount(), request.getParentId(), request.getOrderingValue());
+        final var posts = postService.getTree(request.getCount(), request.getParentId(), uid, request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());

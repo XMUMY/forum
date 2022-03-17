@@ -55,29 +55,19 @@ public class PostService {
         return selfDelNo == 1;
     }
 
-    public List<Post> get(int offset, int count, Integer threadId, int orderMethod) {
-        final PostExample postExample = new PostExample();
-        postExample.setLimit(count);
-        postExample.setOffset(offset);
-        postExample.createCriteria().andThreadIdEqualTo(threadId);
-        postExample.setOrderByClause("pinned desc," + orderStr[orderMethod]);
-        return postMapper.selectByExample(postExample);
+    public List<PostWithInfo> get(int offset, int count, Integer threadId, String uid, int orderMethod) {
+        return postExtMapper.select(offset, count, threadId, uid, orderStr[orderMethod]);
     }
 
-    public List<Post> getTree(int limit, Integer startPostId, int ordering) {
-        return postExtMapper.selectTree(limit, startPostId, orderStr[ordering]);
+    public List<PostWithInfo> getTree(int limit, Integer startPostId, String uid, int ordering) {
+        return postExtMapper.selectTree(limit, startPostId, uid, orderStr[ordering]);
     }
 
-    public List<Post> getUserPost(int offset, int count, String uid, int ordering) {
-        final PostExample postExample = new PostExample();
-        postExample.setLimit(count);
-        postExample.setOffset(offset);
-        postExample.createCriteria().andUidEqualTo(uid);
-        postExample.setOrderByClause(orderStr[ordering]);
-        return postMapper.selectByExample(postExample);
+    public List<PostWithInfo> getUserPost(int offset, int count, String uid, int ordering) {
+        return postExtMapper.selectByUser(offset, count, uid, orderStr[ordering]);
     }
 
-    public List<Post> getSaved(int offset, int count, String uid) {
+    public List<PostWithInfo> getSaved(int offset, int count, String uid) {
         return postExtMapper.selectSaved(count, offset, uid);
     }
 
