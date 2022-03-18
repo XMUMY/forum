@@ -163,10 +163,9 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
-        // TODO: clearify useage of this API
         String uid = AuthInterceptor.UID.get();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        final var posts = postService.getTree(request.getCount(), request.getParentId(), uid, request.getOrderingValue());
+        final var posts = postService.getLvl2(request.getOffset(), request.getCount(), request.getParentId(), uid, request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());

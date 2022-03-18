@@ -23,6 +23,12 @@ public interface PostExtMapper {
                               @Param("uid") String uid,
                               @Param("ordering") String ordering);
 
+    List<PostWithInfo> selectLvl2(@Param("offset") int offset,
+                                  @Param("count") int count,
+                                  @Param("parentId") int parentId,
+                                  @Param("uid") String uid,
+                                  @Param("ordering") String ordering);
+
     List<PostWithInfo> selectByUser(@Param("offset") int offset,
                                     @Param("count") int count,
                                     @Param("uid") String uid,

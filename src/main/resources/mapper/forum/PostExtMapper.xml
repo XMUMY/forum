@@ -84,14 +84,14 @@
                    else true end as saved
         from (select *
               from lvlOnePosts
-              union
+              union all
               (select lvlTwoPosts.*
                from lvlOnePosts p1
                         join lateral (
                select *
                from forum.post p
                where p.parent_id = p1.id
-               order by p.id asc
+               order by p.id desc
                limit 3 ) lvlTwoPosts
                on true)) allpost
                  left join forum.saved_post s on s.post_id = allpost.id and s.uid = #{uid}
@@ -112,6 +112,23 @@
                  left join forum.saved_post s on s.post_id = p.id and s.uid = #{uid}
                  left join forum.liked_post l on l.post_id = p.id and l.uid = #{uid}
         where p.uid = #{uid}
+        order by ${ordering}
+        limit #{count} offset #{offset}
+    </select>
+
+    <select id="selectLvl2" resultMap="BaseWithInfo">
+        select p.*,
+               case
+                   when l.liked is null then 0
+                   when l.liked then 1
+                   else -1 end   as liked,
+               case
+                   when s.id is null then false
+                   else true end as saved
+        from forum.post p
+                 left join forum.saved_post s on s.post_id = p.id and s.uid = #{uid}
+                 left join forum.liked_post l on l.post_id = p.id and l.uid = #{uid}
+        where p.parent_id = #{parentId}
         order by ${ordering}
         limit #{count} offset #{offset}
     </select>

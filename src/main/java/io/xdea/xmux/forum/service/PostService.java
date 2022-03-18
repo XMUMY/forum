@@ -59,6 +59,10 @@ public class PostService {
         return postExtMapper.select(offset, count, threadId, uid, orderStr[orderMethod]);
     }
 
+    public List<PostWithInfo> getLvl2(int offset, int count, Integer parentId, String uid, int orderMethod) {
+        return postExtMapper.selectLvl2(offset, count, parentId, uid, orderStr[orderMethod]);
+    }
+
     public List<PostWithInfo> getTree(int limit, Integer startPostId, String uid, int ordering) {
         return postExtMapper.selectTree(limit, startPostId, uid, orderStr[ordering]);
     }
