@@ -53,7 +53,7 @@
                  left join forum.saved_thread s on s.thread_id = t.id and s.uid = #{uid}
                  left join forum.liked_thread l on l.thread_id = t.id and l.uid = #{uid}
         where t.forum_id = #{forumId}
-        order by ${ordering}
+        order by pinned desc, ${ordering}
         limit #{count} offset #{offset}
     </select>
 

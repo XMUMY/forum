@@ -71,7 +71,7 @@
             from forum.post
             where thread_id = #{threadId}
               and parent_id &lt; 1
-            order by ${ordering}
+            order by pinned desc, ${ordering}
             limit #{count} offset #{offset}
         )
         select allpost.*,
