@@ -17,3 +17,16 @@ enum Ordering {
   // Order by oldest publish time.
   oldest = 4;
 }
+
+message Image {
+  string url = 1;
+}
+
+message PlainContent {
+  string content = 1;
+  repeated Image images = 2;
+}
+
+message MarkdownContent {
+  string content = 1;
+}

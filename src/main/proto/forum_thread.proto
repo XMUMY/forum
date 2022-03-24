@@ -11,7 +11,11 @@ option java_outer_classname = "ThreadGrpcApi";
 message CreateThreadReq {
   int32 forumId = 1;
   string title = 2;
-  string body = 3;
+
+  oneof body {
+    PlainContent plainContent = 30;
+    MarkdownContent markdownContent = 31;
+  }
 }
 
 message CreateThreadResp {
@@ -43,20 +47,24 @@ message Thread {
   int32 id = 1;
   string uid = 2;
   string title = 3;
-  string body = 4;
-  int32 likes = 5;
-  int32 posts = 6;
-  bool pinned = 7;
-  bool digest = 8;
-  google.protobuf.Timestamp createAt = 9;
+  int32 likes = 4;
+  int32 posts = 5;
+  bool pinned = 6;
+  bool digest = 7;
+  google.protobuf.Timestamp createAt = 8;
   // Last modification.
-  google.protobuf.Timestamp updateAt = 10;
+  google.protobuf.Timestamp updateAt = 9;
   // Last activity.
-  google.protobuf.Timestamp lastUpdate = 11;
+  google.protobuf.Timestamp lastUpdate = 10;
   // + For like. - for dislike. 0 for cancel.
-  int32 liked = 12;
+  int32 liked = 11;
   // Whether current thread is saved by user.
-  bool saved = 13;
+  bool saved = 12;
+
+  oneof body {
+    PlainContent plainContent = 30;
+    MarkdownContent markdownContent = 31;
+  }
 }
 
 message LikeThreadReq {

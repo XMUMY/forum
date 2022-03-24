@@ -18,7 +18,8 @@ CREATE TABLE forum."thread" (
     "uid" TEXT NOT NULL,
     "forum_id" INT NOT NULL,
     "title" TEXT NOT NULL,
-    "body" TEXT,
+    "body_type" INT,
+    "body" json,
     "create_at" timestamp NOT NULL,
     "update_at" timestamp,
     "last_update" timestamp,
@@ -35,7 +36,8 @@ CREATE TABLE forum."post" (
     "parent_id" INT NOT NULL DEFAULT 0,
     "ref_post_id" INT NOT NULL DEFAULT 0,
     "ref_post_uid" TEXT,
-    "content" TEXT,
+    "content_type" INT,
+    "content" json,
     "create_at" timestamp NOT NULL,
     "update_at" timestamp,
     "likes" INT NOT NULL DEFAULT 0,
@@ -73,7 +75,8 @@ CREATE TABLE forum."notif" (
     "sender_uid" TEXT NOT NULL,
     "create_at" timestamp NOT NULL,
     "has_read" BOOLEAN NOT NULL,
-    "type" INT NOT NULL
+    "type" INT NOT NULL,
+    "data" json
 );
 ALTER TABLE forum."thread"
 ADD FOREIGN KEY ("forum_id") REFERENCES forum."forum" ("id");
