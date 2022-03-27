@@ -28,14 +28,13 @@ public abstract class NotifController extends ForumController {
         String uid = AuthInterceptor.UID.get();
         var notifs = notifService.get(uid, request.getPageNo(), request.getPageSize());
         var respBuilder = NotifGrpcApi.GetNotifResp.newBuilder();
+        // TODO: enrich notif content
         notifs.forEach(notif -> respBuilder.addNotifs(NotifGrpcApi.Notif.newBuilder()
                 .setId(notif.getId())
                 .setTypeValue(notif.getType())
                 .setCreateTime(Timestamp.newBuilder()
                         .setSeconds(notif.getCreateAt().getTime() / 1000))
                 .setHasRead(notif.getHasRead())
-                .setRefId(notif.getRefId())
-                .setObjId(notif.getObjId())
                 .setSenderUid(notif.getSenderUid())
                 .setObjContent(notif.getObjContent())
                 .setRefContent(notif.getRefContent())));

@@ -1,5 +1,6 @@
 package io.xdea.xmux.forum.controller;
 
+import io.xdea.xmux.forum.dto.CommonGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.dto.ThreadGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
@@ -14,7 +15,10 @@ import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class ThreadController extends NotifController {
 
@@ -26,7 +30,7 @@ public abstract class ThreadController extends NotifController {
     }
 
     private ThreadGrpcApi.Thread buildThread(ThreadWithInfo thread) {
-        return ThreadGrpcApi.Thread.newBuilder()
+        var builder = ThreadGrpcApi.Thread.newBuilder()
                 .setId(thread.getId())
                 .setCreateAt(Timestamp.newBuilder()
                         .setSeconds(thread.getCreateAt().getTime() / 1000))
@@ -38,11 +42,28 @@ public abstract class ThreadController extends NotifController {
                 .setLikes(thread.getLikes())
                 .setPinned(thread.getPinned())
                 .setTitle(thread.getTitle())
-                .setBody(thread.getBody())
                 .setUid(thread.getUid())
                 .setLiked(thread.getLiked())
                 .setSaved(thread.getSaved())
-                .setPosts(thread.getPosts()).build();
+                .setPosts(thread.getPosts());
+
+        var bodyCase = ThreadGrpcApi.Thread.BodyCase
+                .forNumber(thread.getBodyType());
+        if (bodyCase.equals(ThreadGrpcApi.Thread.BodyCase.PLAINCONTENT)) {
+            var contentBuilder = CommonGrpcApi.PlainContent.newBuilder();
+            contentBuilder.setContent((String) thread.getBody().get("content"));
+            for (String img : (List<String>) thread.getBody().get("images")) {
+                contentBuilder.addImages(CommonGrpcApi.Image.newBuilder().setUrl(img).build());
+            }
+
+            builder.setPlainContent(contentBuilder.build());
+
+        } else if (bodyCase.equals(ThreadGrpcApi.Thread.BodyCase.MARKDOWNCONTENT)) {
+            builder.setMarkdownContent(CommonGrpcApi.MarkdownContent.newBuilder()
+                    .setContent((String) thread.getBody().get("content")).build());
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -51,7 +72,6 @@ public abstract class ThreadController extends NotifController {
         Date nowTime = new Date();
         Thread thread = new Thread()
                 .withTitle(request.getTitle())
-                .withBody(request.getBody())
                 .withForumId(request.getForumId())
                 .withUid(uid)
                 .withCreateAt(nowTime)
@@ -61,6 +81,23 @@ public abstract class ThreadController extends NotifController {
                 .withPosts(0)
                 .withDigest(false)
                 .withPinned(false);
+
+        thread.setBodyType(request.getBodyCase().getNumber());
+        // Store content according to type
+        HashMap<String, Object> content = new HashMap<>();
+        if (request.getBodyCase().equals(ThreadGrpcApi.CreateThreadReq.BodyCase.PLAINCONTENT)) {
+            content.put("content", request.getPlainContent().getContent());
+            // Store image URLs
+            ArrayList<String> imgList = new ArrayList<>();
+            for (var image : request.getPlainContent().getImagesList()) {
+                imgList.add(image.getUrl());
+            }
+            content.put("images", imgList);
+
+        } else if (request.getBodyCase().equals(ThreadGrpcApi.CreateThreadReq.BodyCase.MARKDOWNCONTENT)) {
+            content.put("content", request.getMarkdownContent().getContent());
+        }
+        thread.setBody(content);
 
         if (!threadService.create(thread))
             throw new RuntimeException("threadService.create returned false");

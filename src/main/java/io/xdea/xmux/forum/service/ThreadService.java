@@ -146,9 +146,10 @@ public class ThreadService {
     }
 
     public boolean update(int id, String title, String body) {
+        // TODO: fix update api
         final Date nowTime = new Date();
         return threadMapper.updateByPrimaryKeySelective(new Thread()
-                .withId(id).withTitle(title).withBody(body)
+                .withId(id).withTitle(title)
                 .withUpdateAt(nowTime).withLastUpdate(nowTime)) == 1;
     }
 }

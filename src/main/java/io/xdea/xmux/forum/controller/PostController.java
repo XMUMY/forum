@@ -4,6 +4,7 @@ import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import io.xdea.xmux.forum.dto.CommonGrpcApi;
 import io.xdea.xmux.forum.dto.PostGrpcApi;
 import io.xdea.xmux.forum.dto.SavedGrpcApi;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
@@ -15,7 +16,10 @@ import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.PostService;
 import io.xdea.xmux.forum.service.ThreadService;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
@@ -26,20 +30,36 @@ public abstract class PostController extends ThreadController {
     }
 
     private PostGrpcApi.Post buildPost(PostWithInfo post) {
-        return PostGrpcApi.Post.newBuilder()
+        var builder = PostGrpcApi.Post.newBuilder()
                 .setId(post.getId())
                 .setCreateAt(Timestamp.newBuilder()
                         .setSeconds(post.getCreateAt().getTime() / 1000))
                 .setLikes(post.getLikes())
                 .setPinned(post.getPinned())
-                .setContent(post.getContent())
                 .setUid(post.getUid())
                 .setParentId(post.getParentId())
                 .setRefPostUid(post.getRefPostUid() == null ? "" : post.getRefPostUid())
                 .setThreadId(post.getThreadId())
                 .setRefPostId(post.getRefPostId())
                 .setLiked(post.getLiked())
-                .setSaved(post.getSaved()).build();
+                .setSaved(post.getSaved());
+
+        var contentCase = PostGrpcApi.Post.ContentCase
+                .forNumber(post.getContentType());
+        if (contentCase.equals(PostGrpcApi.Post.ContentCase.PLAINCONTENT)) {
+            var contentBuilder = CommonGrpcApi.PlainContent.newBuilder();
+            contentBuilder.setContent((String) post.getContent().get("content"));
+            for (String img : (List<String>) post.getContent().get("images")) {
+                contentBuilder.addImages(CommonGrpcApi.Image.newBuilder().setUrl(img).build());
+            }
+
+            builder.setPlainContent(contentBuilder.build());
+
+        } else if (contentCase.equals(PostGrpcApi.Post.ContentCase.MARKDOWNCONTENT)) {
+            builder.setMarkdownContent(CommonGrpcApi.MarkdownContent.newBuilder()
+                    .setContent((String) post.getContent().get("content")).build());
+        }
+        return builder.build();
     }
 
     @Override
@@ -63,13 +83,29 @@ public abstract class PostController extends ThreadController {
                 .withCreateAt(nowTime)
                 .withUpdateAt(nowTime)
                 .withUid(uid)
-                .withContent(request.getContent())
                 .withPinned(false)
                 .withLikes(0)
                 .withThreadId(request.getThreadId())
                 .withRefPostId(request.getRefPostId())
                 .withParentId(request.getParentId())
                 .withRefPostUid(request.getRefPostUid());
+
+        post.setContentType(request.getContentCase().getNumber());
+        // Store content according to type
+        HashMap<String, Object> content = new HashMap<>();
+        if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.PLAINCONTENT)) {
+            content.put("content", request.getPlainContent().getContent());
+            // Store image URLs
+            ArrayList<String> imgList = new ArrayList<>();
+            for (var image : request.getPlainContent().getImagesList()) {
+                imgList.add(image.getUrl());
+            }
+            content.put("images", imgList);
+
+        } else if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.MARKDOWNCONTENT)) {
+            content.put("content", request.getMarkdownContent().getContent());
+        }
+        post.setContent(content);
 
         if (!postService.create(post))
             throw new RuntimeException("postService.create returned false");

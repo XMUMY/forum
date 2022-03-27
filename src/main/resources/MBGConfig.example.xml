@@ -32,10 +32,14 @@
         <table schema="forum" tableName="post">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.post', 'id'));"
                           identity="true"/>
+            <columnOverride column="content" javaType="java.util.Map"
+                            typeHandler="io.xdea.xmux.forum.mapper.JsonTypeHandler"/>
         </table>
         <table schema="forum" tableName="thread">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.thread', 'id'));"
                           identity="true"/>
+            <columnOverride column="body" javaType="java.util.Map"
+                            typeHandler="io.xdea.xmux.forum.mapper.JsonTypeHandler"/>
         </table>
         <table schema="forum" tableName="saved_post">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.saved_post', 'id'));"
@@ -48,6 +52,8 @@
         <table schema="forum" tableName="notif">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.notif', 'id'));"
                           identity="true"/>
+            <columnOverride column="data" javaType="java.util.Map"
+                            typeHandler="io.xdea.xmux.forum.mapper.JsonTypeHandler"/>
         </table>
         <table schema="forum" tableName="liked_post">
             <generatedKey column="id" sqlStatement="SELECT currval(pg_get_serial_sequence('forum.liked_post', 'id'));"
