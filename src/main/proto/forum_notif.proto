@@ -4,6 +4,7 @@ option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "NotifGrpcApi";
 
 import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
 package xmux.forum.v4;
 
 message NotifMarkAsReadReq {

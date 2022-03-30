@@ -3,6 +3,8 @@ syntax = "proto3";
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "SavedGrpcApi";
 
+import "validate/validate.proto";
+
 package xmux.forum.v4;
 
 message SaveThreadReq {

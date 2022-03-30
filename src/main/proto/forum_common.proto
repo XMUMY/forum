@@ -5,6 +5,8 @@ package xmux.forum.v4;
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "CommonGrpcApi";
 
+import "validate/validate.proto";
+
 enum Ordering {
   // Order by latest activity (including publish/edit/post).
   update = 0;
@@ -19,14 +21,14 @@ enum Ordering {
 }
 
 message Image {
-  string url = 1;
+  string url = 1 [(validate.rules).string.max_len = 200];
 }
 
 message PlainContent {
-  string content = 1;
-  repeated Image images = 2;
+  string content = 1 [(validate.rules).string.max_len = 1000];
+  repeated Image images = 2 [(validate.rules).repeated.max_items = 9];
 }
 
 message MarkdownContent {
-  string content = 1;
+  string content = 1 [(validate.rules).string.max_len = 1000];
 }

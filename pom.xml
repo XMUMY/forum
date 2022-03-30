@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <protobuf.version>3.19.4</protobuf.version>
         <grpc.version>1.43.1</grpc.version>
+        <pgv.version>0.6.7</pgv.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
@@ -69,6 +70,16 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.envoyproxy.protoc-gen-validate</groupId>
+            <artifactId>pgv-java-stub</artifactId>
+            <version>${pgv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.envoyproxy.protoc-gen-validate</groupId>
+            <artifactId>pgv-java-grpc</artifactId>
+            <version>${pgv.version}</version>
         </dependency>
     </dependencies>
 
@@ -145,20 +156,35 @@
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-                    </protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
-                    </pluginArtifact>
-                </configuration>
                 <executions>
                     <execution>
+                        <id>protoc-gen</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>compile</goal>
                             <goal>compile-custom</goal>
                         </goals>
+                        <configuration>
+                            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                            </protocArtifact>
+                            <pluginId>grpc-java</pluginId>
+                            <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                            </pluginArtifact>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>protoc-gen-validate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile-custom</goal>
+                        </goals>
+                        <configuration>
+                            <pluginParameter>lang=java</pluginParameter>
+                            <pluginId>java-pgv</pluginId>
+                            <pluginArtifact>
+                                io.envoyproxy.protoc-gen-validate:protoc-gen-validate:${pgv.version}:exe:${os.detected.classifier}
+                            </pluginArtifact>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

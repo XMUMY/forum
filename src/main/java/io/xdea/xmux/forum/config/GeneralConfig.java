@@ -1,26 +1,28 @@
 package io.xdea.xmux.forum.config;
 
+import io.envoyproxy.pgv.ReflectiveValidatorIndex;
+import io.envoyproxy.pgv.grpc.ValidatingServerInterceptor;
 import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import net.devh.boot.grpc.server.serverfactory.GrpcServerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class GeneralConfig {
-    private final AuthInterceptor authInterceptor;
-
-    @Autowired
-    public GeneralConfig(AuthInterceptor authInterceptor) {
-        this.authInterceptor = authInterceptor;
+    @Bean
+    public ValidatingServerInterceptor ValidatingServerInterceptor() {
+        ReflectiveValidatorIndex index = new ReflectiveValidatorIndex();
+        return new ValidatingServerInterceptor(index);
     }
 
     @Bean
-    @DependsOn("authInterceptor")
-    public GrpcServerConfigurer interceptorServerConfigurer() {
+    @Autowired
+    public GrpcServerConfigurer interceptorServerConfigurer(AuthInterceptor authInterceptor,
+                                                            ValidatingServerInterceptor validatingServerInterceptor) {
         return serverBuilder -> {
             serverBuilder.intercept(authInterceptor);
+            serverBuilder.intercept(validatingServerInterceptor);
         };
     }
 
