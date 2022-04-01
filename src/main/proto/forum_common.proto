@@ -25,10 +25,10 @@ message Image {
 }
 
 message PlainContent {
-  string content = 1 [(validate.rules).string.max_len = 1000];
+  string content = 1 [(validate.rules).string.max_len = 1500];
   repeated Image images = 2 [(validate.rules).repeated.max_items = 9];
 }
 
 message MarkdownContent {
-  string content = 1 [(validate.rules).string.max_len = 1000];
+  string content = 1 [(validate.rules).string.max_len = 1500];
 }
