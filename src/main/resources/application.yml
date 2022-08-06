@@ -13,6 +13,10 @@ spring:
     url: jdbc:postgresql://${DB_ADDR}:${DB_PORT:5432}/${DB_NAME}
   profiles:
     active: ${PROFILE:prod}
+  redis:
+    host: ${REDIS_ADDR}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWD}
 mybatis:
   mapper-locations: mapper/**/*.xml
 sentry:
