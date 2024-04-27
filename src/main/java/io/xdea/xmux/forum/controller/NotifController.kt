@@ -15,7 +15,7 @@ import io.xdea.xmux.forum.service.NotifService
 import java.util.function.Consumer
 
 abstract class NotifController protected constructor(
-    forumService: ForumService?,
+    forumService: ForumService,
     protected val notifService: NotifService
 ) : ForumController(forumService) {
     override fun getNotifNum(request: Empty?, responseObserver: StreamObserver<GetNotifNumResp?>) {
