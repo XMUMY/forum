@@ -8,6 +8,7 @@ import "forum_post.proto";
 import "forum_thread.proto";
 import "forum_saved.proto";
 import "forum_notif.proto";
+import "forum_report.proto";
 
 option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "ForumServiceGrpcApi";
@@ -59,6 +60,10 @@ service Forum {
   rpc GetSavedThreads(GetSavedThreadsReq) returns (GetThreadsResp);
   // Get saved posts.
   rpc GetSavedPosts(GetSavedPostsReq) returns (GetPostsResp);
+
+  // Reporting
+  rpc ReportPostOrThread(ReportPostOrThreadReq) returns (ReportPostOrThreadResp);
+  rpc GetReportTypes(google.protobuf.Empty) returns (GetReportTypesResp);
 
   // Notif
   rpc GetNotifNum(google.protobuf.Empty) returns (GetNotifNumResp);

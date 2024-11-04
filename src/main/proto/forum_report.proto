@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_package = "io.xdea.xmux.forum.dto";
+option java_outer_classname = "ReportGrpcApi";
+
+import "validate/validate.proto";
+
+package xmux.forum.v4;
+
+message ReportPostOrThreadReq {
+  oneof target {
+    int32 postId = 1;
+    int32 threadId = 2;
+  }
+  int32 typeId = 3;
+  string description = 4;
+}
+
+message ReportPostOrThreadResp {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetReportTypesResp {
+  repeated ReportType types = 1;
+}
+
+message ReportType {
+  int32 id = 1;
+  string name = 2;
+}

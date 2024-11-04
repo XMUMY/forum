@@ -203,7 +203,7 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <excludeDefaultDirectories>false</excludeDefaultDirectories>
                     <filesets>
                         <fileset>
                             <directory>src/main/proto</directory>
@@ -214,15 +214,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>clean-proto-dep</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>

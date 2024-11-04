@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcService
 @SentryTransaction(operation = "controller")
-public class UltimateController extends SavedController {
+public class UltimateController extends ReportController {
     @Autowired
     public UltimateController(ForumService forumService, NotifService notifService, ThreadService threadService,
-                              PostService postService, SavedService savedService) {
-        super(forumService, notifService, threadService, postService, savedService);
+                              PostService postService, SavedService savedService, ReportService reportService) {
+        super(forumService, notifService, threadService, postService, savedService, reportService);
     }
 }

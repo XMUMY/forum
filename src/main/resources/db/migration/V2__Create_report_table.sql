@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS forum."report" (
+    "id" SERIAL PRIMARY KEY,
+    "uid" TEXT NOT NULL,
+    "type_id" INT NOT NULL,
+    "target_id" INT NOT NULL,
+    "target_type" INT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON COLUMN forum."report"."target_type" IS '0: thread, 1: post';
+
+CREATE INDEX idx_report_user_target ON forum."report" ("uid", "target_id", "target_type");
+
+CREATE TABLE IF NOT EXISTS forum."report_type" (
+    "id" INT PRIMARY KEY,
+    "name" TEXT NOT NULL
+);
+
+INSERT INTO forum."report_type" ("id", "name") VALUES (0, 'spam');
+INSERT INTO forum."report_type" ("id", "name") VALUES (1, 'violence');
+INSERT INTO forum."report_type" ("id", "name") VALUES (2, 'sexual');
+INSERT INTO forum."report_type" ("id", "name") VALUES (3, 'false_information');
+INSERT INTO forum."report_type" ("id", "name") VALUES (4, 'politics');
+INSERT INTO forum."report_type" ("id", "name") VALUES (5, 'other');
