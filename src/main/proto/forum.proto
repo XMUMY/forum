@@ -7,19 +7,6 @@ option java_outer_classname = "ForumGrpcApi";
 
 import "validate/validate.proto";
 
-message CreateForumReq {
-  string title = 1;
-  string description = 2;
-}
-
-message CreateForumResp {
-  int32 forumId = 1;
-}
-
-message RemoveForumReq {
-  int32 forumId = 1;
-}
-
 message GetForumsReq {
   int32 from = 1;
   int32 count = 2;

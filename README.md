@@ -6,7 +6,6 @@ gRPC API specifications can be found in `src/main/proto`.
 
 ## Features Roadmap
 
-- [ ] Authentication (JWT)
 - [ ] Moderation System
 - [ ] Thread Image Support
 - [ ] Per-course Forum

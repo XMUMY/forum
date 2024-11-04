@@ -13,11 +13,6 @@ option java_package = "io.xdea.xmux.forum.dto";
 option java_outer_classname = "ForumServiceGrpcApi";
 
 service Forum {
-  // Create a forum.
-  rpc CreateForum(CreateForumReq) returns (CreateForumResp);
-  // Remove a forum, including all threads and posts.
-  // Only admins/owner can remove the forum.
-  rpc RemoveForum(RemoveForumReq) returns (google.protobuf.Empty);
   // Get forums that accessible to the user.
   rpc GetForums(GetForumsReq) returns (GetForumsResp);
 
