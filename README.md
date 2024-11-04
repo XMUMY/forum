@@ -4,6 +4,13 @@
 
 gRPC API specifications can be found in `src/main/proto`.
 
+## Features Roadmap
+
+- [ ] Authentication (JWT)
+- [ ] Moderation System
+- [ ] Thread Image Support
+- [ ] Per-course Forum
+
 ## Environment variables
 
 - `PROFILE`: Default is `prod`, which connects to the real auth service. Use `dev` for development, which uses a dummy

@@ -17,7 +17,7 @@ public abstract class NotifController extends ForumController {
 
     @Override
     public void getNotifNum(Empty request, StreamObserver<NotifGrpcApi.GetNotifNumResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Long num = notifService.getUserNotifNum(uid);
         responseObserver.onNext(NotifGrpcApi.GetNotifNumResp.newBuilder().setNum(num.intValue()).build());
         responseObserver.onCompleted();
@@ -25,7 +25,7 @@ public abstract class NotifController extends ForumController {
 
     @Override
     public void getNotif(NotifGrpcApi.GetNotifReq request, StreamObserver<NotifGrpcApi.GetNotifResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         var notifs = notifService.get(uid, request.getPageNo(), request.getPageSize());
         var respBuilder = NotifGrpcApi.GetNotifResp.newBuilder();
         // TODO: enrich notif content
@@ -44,7 +44,7 @@ public abstract class NotifController extends ForumController {
 
     @Override
     public void notifMarkAsRead(NotifGrpcApi.NotifMarkAsReadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         int numUpdated = notifService.setAsRead(uid, request.getIdsList());
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();

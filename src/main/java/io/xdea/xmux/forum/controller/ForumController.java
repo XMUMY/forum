@@ -21,7 +21,7 @@ public abstract class ForumController extends ForumGrpc.ForumImplBase {
 
     @Override
     public void createForum(ForumGrpcApi.CreateForumReq request, StreamObserver<ForumGrpcApi.CreateForumResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Forum forum = new Forum()
                 .withCreateAt(new Date())
                 .withTitle(request.getTitle())
@@ -39,7 +39,7 @@ public abstract class ForumController extends ForumGrpc.ForumImplBase {
 
     @Override
     public void removeForum(ForumGrpcApi.RemoveForumReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Forum forum = forumService.getById(request.getForumId());
         // Check if the user has privilege to remove the post
         if (forum == null) {

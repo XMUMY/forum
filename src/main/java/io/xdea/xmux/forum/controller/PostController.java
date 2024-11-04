@@ -64,7 +64,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void getPosts(PostGrpcApi.GetPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         var posts = postService.get(request.getOffset(), request.getCount(),
                 request.getThreadId(), uid, request.getOrderingValue());
@@ -77,7 +77,7 @@ public abstract class PostController extends ThreadController {
     @Override
     public void createPost(PostGrpcApi.CreatePostReq request,
                            StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final Date nowTime = new Date();
         Post post = new Post()
                 .withCreateAt(nowTime)
@@ -120,7 +120,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void likePost(PostGrpcApi.LikePostReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         if (request.getLike() > 0) {
             if (!postService.upvote(request.getPostId(), uid))
                 throw new RuntimeException("postService.upvote returned false");
@@ -137,7 +137,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void pinPost(PostGrpcApi.PinPostReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final var post = postService.getById(request.getPostId());
         final Thread thread = threadService.getById(post.getThreadId());
         if (!thread.getUid().equals(uid)) {
@@ -153,7 +153,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void removePost(PostGrpcApi.RemovePostReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Post post = postService.getById(request.getPostId());
         // Check if the user has privilege to remove the post
         if (post == null) {
@@ -188,7 +188,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void getSavedPosts(SavedGrpcApi.GetSavedPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         final var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
@@ -199,7 +199,7 @@ public abstract class PostController extends ThreadController {
 
     @Override
     public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         final var posts = postService.getLvl2(request.getOffset(), request.getCount(), request.getParentId(), uid, request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));

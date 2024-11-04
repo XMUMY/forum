@@ -17,7 +17,7 @@ public abstract class SavedController extends PostController {
 
     @Override
     public void saveThread(SavedGrpcApi.SaveThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         if (savedService.checkThreadSaved(uid, request.getThreadId())) {
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
@@ -32,7 +32,7 @@ public abstract class SavedController extends PostController {
 
     @Override
     public void savePost(SavedGrpcApi.SavePostReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         if (savedService.checkPostSaved(uid, request.getPostId())) {
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
@@ -47,7 +47,7 @@ public abstract class SavedController extends PostController {
 
     @Override
     public void unsaveThread(SavedGrpcApi.UnsaveThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         savedService.removeSavedThread(uid, request.getThreadId());
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
@@ -55,7 +55,7 @@ public abstract class SavedController extends PostController {
 
     @Override
     public void unsavePost(SavedGrpcApi.UnsavePostReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         savedService.removeSavedPost(uid, request.getPostId());
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();

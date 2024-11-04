@@ -68,7 +68,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void createThread(ThreadGrpcApi.CreateThreadReq request, StreamObserver<ThreadGrpcApi.CreateThreadResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Date nowTime = new Date();
         Thread thread = new Thread()
                 .withTitle(request.getTitle())
@@ -110,7 +110,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void removeThread(ThreadGrpcApi.RemoveThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         Thread thread = threadService.getById(request.getThreadId());
         // Check if the user has privilege to remove the thread
         if (thread == null) {
@@ -143,7 +143,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void getThreads(ThreadGrpcApi.GetThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         int forumId = request.getForumId();
         final var respBuilder = ThreadGrpcApi.GetThreadsResp.newBuilder();
         var threads = threadService.get(request.getOffset(), request.getCount(), forumId, uid, request.getOrderingValue());
@@ -157,7 +157,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void likeThread(ThreadGrpcApi.LikeThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         if (request.getLike() > 0) {
             if (!threadService.upvote(request.getThreadId(), uid))
                 throw new RuntimeException("threadService.upvote returned false");
@@ -174,7 +174,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void pinThread(ThreadGrpcApi.PinThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final Thread thread = threadService.getById(request.getThreadId());
         final Forum forum = forumService.getById(thread.getForumId());
         if (!forum.getCreatorUid().equals(uid)) {
@@ -190,7 +190,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void digestThread(ThreadGrpcApi.DigestThreadReq request, StreamObserver<Empty> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final Thread thread = threadService.getById(request.getThreadId());
         final Forum forum = forumService.getById(thread.getForumId());
         if (!forum.getCreatorUid().equals(uid)) {
@@ -206,7 +206,7 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void getSavedThreads(SavedGrpcApi.GetSavedThreadsReq request, StreamObserver<ThreadGrpcApi.GetThreadsResp> responseObserver) {
-        String uid = AuthInterceptor.UID.get();
+        String uid = AuthInterceptor.getUid();
         final var saved = threadService.getSaved(request.getOffset(), request.getCount(), uid);
         final var builder = ThreadGrpcApi.GetThreadsResp.newBuilder();
         saved.forEach(thread -> {
