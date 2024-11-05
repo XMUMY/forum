@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UltimateController extends ReportController {
     @Autowired
     public UltimateController(ForumService forumService, NotifService notifService, ThreadService threadService,
-                              PostService postService, SavedService savedService, ReportService reportService) {
-        super(forumService, notifService, threadService, postService, savedService, reportService);
+                              PostService postService, SavedService savedService, ReportService reportService, AliyunGreenService aliyunGreenService) {
+        super(forumService, notifService, threadService, postService, savedService, reportService, aliyunGreenService);
     }
 }

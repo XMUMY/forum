@@ -13,8 +13,8 @@ public abstract class ReportController extends SavedController {
     protected final ReportService reportService;
 
     protected ReportController(ForumService forumService, NotifService notifService, ThreadService threadService,
-                               PostService postService, SavedService savedService, ReportService reportService) {
-        super(forumService, notifService, threadService, postService, savedService);
+                               PostService postService, SavedService savedService, ReportService reportService, AliyunGreenService aliyunGreenService) {
+        super(forumService, notifService, threadService, postService, savedService, aliyunGreenService);
         this.reportService = reportService;
     }
 

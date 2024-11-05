@@ -10,8 +10,8 @@ public abstract class SavedController extends PostController {
     protected final SavedService savedService;
 
     protected SavedController(ForumService forumService, NotifService notifService, ThreadService threadService,
-                              PostService postService, SavedService savedService) {
-        super(forumService, notifService, threadService, postService);
+                              PostService postService, SavedService savedService, AliyunGreenService aliyunGreenService) {
+        super(forumService, notifService, threadService, postService, aliyunGreenService);
         this.savedService = savedService;
     }
 

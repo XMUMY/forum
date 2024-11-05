@@ -5,6 +5,7 @@ import io.xdea.xmux.forum.dto.ForumGrpcApi;
 import io.xdea.xmux.forum.model.Forum;
 import io.xdea.xmux.forum.service.ForumService;
 import io.grpc.stub.StreamObserver;
+import io.xdea.xmux.forum.service.AliyunGreenService;
 
 import java.util.List;
 
@@ -13,9 +14,11 @@ import java.util.List;
  */
 public abstract class ForumController extends ForumGrpc.ForumImplBase {
     protected final ForumService forumService;
+    protected final AliyunGreenService aliyunGreenService;
 
-    protected ForumController(ForumService forumService) {
+    protected ForumController(ForumService forumService, AliyunGreenService aliyunGreenService) {
         this.forumService = forumService;
+        this.aliyunGreenService = aliyunGreenService;
     }
 
     @Override

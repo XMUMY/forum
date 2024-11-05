@@ -23,3 +23,12 @@ mybatis:
 sentry:
   dsn: ${SENTRY_DSN}
   traces-sample-rate: 0.5
+
+aliyun:
+  green:
+    accessKeyId: ${ALIYUN_GREEN_ACCESS_KEY_ID}
+    accessKeySecret: ${ALIYUN_GREEN_ACCESS_KEY_SECRET}
+    endpoint: ${ALIYUN_GREEN_ENDPOINT}
+    readTimeout: ${ALIYUN_GREEN_READ_TIMEOUT:6000}
+    connectTimeout: ${ALIYUN_GREEN_CONNECT_TIMEOUT:3000}
+    textService: ${ALIYUN_GREEN_TEXT_SERVICE:comment_multilingual_pro}

@@ -11,6 +11,7 @@ import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Post;
 import io.xdea.xmux.forum.model.PostWithInfo;
 import io.xdea.xmux.forum.model.Thread;
+import io.xdea.xmux.forum.service.AliyunGreenService;
 import io.xdea.xmux.forum.service.ForumService;
 import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.PostService;
@@ -24,8 +25,8 @@ import java.util.List;
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
 
-    protected PostController(ForumService forumService, NotifService notifService, ThreadService threadService, PostService postService) {
-        super(forumService, notifService, threadService);
+    protected PostController(ForumService forumService, NotifService notifService, ThreadService threadService, PostService postService, AliyunGreenService aliyunGreenService) {
+        super(forumService, notifService, threadService, aliyunGreenService);
         this.postService = postService;
     }
 
@@ -78,6 +79,21 @@ public abstract class PostController extends ThreadController {
     public void createPost(PostGrpcApi.CreatePostReq request,
                            StreamObserver<PostGrpcApi.CreatePostResp> responseObserver) {
         String uid = AuthInterceptor.getUid();
+        // Check if the content is sensitive
+        if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.PLAINCONTENT)) {
+            if (!aliyunGreenService.checkText(request.getPlainContent().getContent(), uid,
+                    AliyunGreenService.ContentType.POST)) {
+                responseObserver.onError(Status.INVALID_ARGUMENT.asException());
+                return;
+            }
+        } else if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.MARKDOWNCONTENT)) {
+            if (!aliyunGreenService.checkText(request.getMarkdownContent().getContent(), uid,
+                    AliyunGreenService.ContentType.POST)) {
+                responseObserver.onError(Status.INVALID_ARGUMENT.asException());
+                return;
+            }
+        }
+
         final Date nowTime = new Date();
         Post post = new Post()
                 .withCreateAt(nowTime)

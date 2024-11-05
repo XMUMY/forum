@@ -22,4 +22,18 @@ INSERT INTO forum."report_type" ("id", "name") VALUES (1, 'violence');
 INSERT INTO forum."report_type" ("id", "name") VALUES (2, 'sexual');
 INSERT INTO forum."report_type" ("id", "name") VALUES (3, 'false_information');
 INSERT INTO forum."report_type" ("id", "name") VALUES (4, 'politics');
-INSERT INTO forum."report_type" ("id", "name") VALUES (5, 'other');
+INSERT INTO forum."report_type" ("id", "name") VALUES (5, 'cyber_bullying');
+INSERT INTO forum."report_type" ("id", "name") VALUES (6, 'other');
+
+CREATE TABLE IF NOT EXISTS forum."censored_content" (
+    "id" SERIAL PRIMARY KEY,
+    "uid" TEXT NOT NULL,
+    "type_id" INT NOT NULL,
+    "content_type" INT NOT NULL,
+    "content" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON COLUMN forum."censored_content"."type_id" IS '0: thread, 1: post';
+COMMENT ON COLUMN forum."censored_content"."content_type" IS '0: text, 1: image';

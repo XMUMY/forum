@@ -10,8 +10,8 @@ import io.xdea.xmux.forum.service.*;
 public abstract class NotifController extends ForumController {
     final protected NotifService notifService;
 
-    protected NotifController(ForumService forumService, NotifService notifService) {
-        super(forumService);
+    protected NotifController(ForumService forumService, NotifService notifService, AliyunGreenService aliyunGreenService) {
+        super(forumService, aliyunGreenService);
         this.notifService = notifService;
     }
 

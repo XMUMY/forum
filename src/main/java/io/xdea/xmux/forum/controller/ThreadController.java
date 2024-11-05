@@ -7,6 +7,7 @@ import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 import io.xdea.xmux.forum.model.Forum;
 import io.xdea.xmux.forum.model.Thread;
 import io.xdea.xmux.forum.model.ThreadWithInfo;
+import io.xdea.xmux.forum.service.AliyunGreenService;
 import io.xdea.xmux.forum.service.ForumService;
 import io.xdea.xmux.forum.service.NotifService;
 import io.xdea.xmux.forum.service.ThreadService;
@@ -24,8 +25,8 @@ public abstract class ThreadController extends NotifController {
 
     protected final ThreadService threadService;
 
-    protected ThreadController(ForumService forumService, NotifService notifService, ThreadService threadService) {
-        super(forumService, notifService);
+    protected ThreadController(ForumService forumService, NotifService notifService, ThreadService threadService, AliyunGreenService aliyunGreenService) {
+        super(forumService, notifService, aliyunGreenService);
         this.threadService = threadService;
     }
 
