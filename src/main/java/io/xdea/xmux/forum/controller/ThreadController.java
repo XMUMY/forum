@@ -70,6 +70,26 @@ public abstract class ThreadController extends NotifController {
     @Override
     public void createThread(ThreadGrpcApi.CreateThreadReq request, StreamObserver<ThreadGrpcApi.CreateThreadResp> responseObserver) {
         String uid = AuthInterceptor.getUid();
+        
+        // Check if the content is sensitive
+        if (request.getBodyCase().equals(ThreadGrpcApi.CreateThreadReq.BodyCase.PLAINCONTENT)) {
+            if (!aliyunGreenService.checkText(request.getTitle() + " - " + request.getPlainContent().getContent(), uid,
+                    AliyunGreenService.ContentType.THREAD)) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("error.censored_content")
+                    .asException());
+                return;
+            }
+        } else if (request.getBodyCase().equals(ThreadGrpcApi.CreateThreadReq.BodyCase.MARKDOWNCONTENT)) {
+            if (!aliyunGreenService.checkText(request.getTitle() + " - " + request.getMarkdownContent().getContent(), uid,
+                    AliyunGreenService.ContentType.THREAD)) {
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("error.censored_content")
+                    .asException());
+                return;
+            }
+        }
+
         Date nowTime = new Date();
         Thread thread = new Thread()
                 .withTitle(request.getTitle())

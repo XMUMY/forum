@@ -83,13 +83,17 @@ public abstract class PostController extends ThreadController {
         if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.PLAINCONTENT)) {
             if (!aliyunGreenService.checkText(request.getPlainContent().getContent(), uid,
                     AliyunGreenService.ContentType.POST)) {
-                responseObserver.onError(Status.INVALID_ARGUMENT.asException());
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("error.censored_content")
+                    .asException());
                 return;
             }
         } else if (request.getContentCase().equals(PostGrpcApi.CreatePostReq.ContentCase.MARKDOWNCONTENT)) {
             if (!aliyunGreenService.checkText(request.getMarkdownContent().getContent(), uid,
                     AliyunGreenService.ContentType.POST)) {
-                responseObserver.onError(Status.INVALID_ARGUMENT.asException());
+                responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("error.censored_content")
+                    .asException());
                 return;
             }
         }
