@@ -25,7 +25,8 @@ import java.util.List;
 public abstract class PostController extends ThreadController {
     protected final PostService postService;
 
-    protected PostController(ForumService forumService, NotifService notifService, ThreadService threadService, PostService postService, AliyunGreenService aliyunGreenService) {
+    protected PostController(ForumService forumService, NotifService notifService, ThreadService threadService,
+            PostService postService, AliyunGreenService aliyunGreenService) {
         super(forumService, notifService, threadService, aliyunGreenService);
         this.postService = postService;
     }
@@ -130,7 +131,20 @@ public abstract class PostController extends ThreadController {
         if (!postService.create(post))
             throw new RuntimeException("postService.create returned false");
 
-        // TODO: Implement notif
+        // Create notif
+        if (post.getParentId() == 0) {
+            // New post on thread
+            final Thread thread = threadService.getById(post.getThreadId());
+            notifService.createNewPostOnThreadNotif(thread.getId(), post.getId(), thread.getUid(), uid);
+        } else if (post.getRefPostId() == 0) {
+            // New reply on post
+            final Post parentPost = postService.getById(post.getParentId());
+            notifService.createNewReplyOnPostNotif(post.getThreadId(), post.getParentId(), post.getId(), parentPost.getUid(), uid);
+        } else {
+            // New reply on reply
+            final Post refPost = postService.getById(post.getRefPostId());
+            notifService.createNewReplyOnPostNotif(post.getThreadId(), post.getRefPostId(), post.getId(), refPost.getUid(), uid);
+        }
 
         var resp = PostGrpcApi.CreatePostResp
                 .newBuilder().setPostId(post.getId()).build();
@@ -201,9 +215,11 @@ public abstract class PostController extends ThreadController {
     }
 
     @Override
-    public void getPostsByUid(PostGrpcApi.GetPostsByUidReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+    public void getPostsByUid(PostGrpcApi.GetPostsByUidReq request,
+            StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        var posts = postService.getUserPost(request.getOffset(), request.getCount(), request.getUid(), request.getOrderingValue());
+        var posts = postService.getUserPost(request.getOffset(), request.getCount(), request.getUid(),
+                request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());
@@ -211,7 +227,8 @@ public abstract class PostController extends ThreadController {
     }
 
     @Override
-    public void getSavedPosts(SavedGrpcApi.GetSavedPostsReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+    public void getSavedPosts(SavedGrpcApi.GetSavedPostsReq request,
+            StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
         String uid = AuthInterceptor.getUid();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
         final var posts = postService.getSaved(request.getOffset(), request.getCount(), uid);
@@ -222,10 +239,12 @@ public abstract class PostController extends ThreadController {
     }
 
     @Override
-    public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request, StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
+    public void getPostsByParent(PostGrpcApi.GetPostsByParentReq request,
+            StreamObserver<PostGrpcApi.GetPostsResp> responseObserver) {
         String uid = AuthInterceptor.getUid();
         final var respBuilder = PostGrpcApi.GetPostsResp.newBuilder();
-        final var posts = postService.getLvl2(request.getOffset(), request.getCount(), request.getParentId(), uid, request.getOrderingValue());
+        final var posts = postService.getLvl2(request.getOffset(), request.getCount(), request.getParentId(), uid,
+                request.getOrderingValue());
         posts.forEach(post -> respBuilder.addPosts(buildPost(post)));
 
         responseObserver.onNext(respBuilder.build());

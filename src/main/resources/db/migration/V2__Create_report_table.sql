@@ -37,3 +37,7 @@ CREATE TABLE IF NOT EXISTS forum."censored_content" (
 
 COMMENT ON COLUMN forum."censored_content"."type_id" IS '0: thread, 1: post';
 COMMENT ON COLUMN forum."censored_content"."content_type" IS '0: text, 1: image';
+
+ALTER TABLE forum."notif" ALTER COLUMN "create_at" SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE forum."notif" ADD COLUMN "read_at" timestamp;
+ALTER TABLE forum."notif" ALTER COLUMN "has_read" SET DEFAULT FALSE;

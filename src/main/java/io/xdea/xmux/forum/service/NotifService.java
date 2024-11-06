@@ -8,6 +8,7 @@ import io.xdea.xmux.forum.model.NotifWithContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class NotifService {
     public int setAsRead(String uid, List<Integer> ids) {
         NotifExample notifExample = new NotifExample();
         notifExample.createCriteria().andUidEqualTo(uid).andIdIn(ids);
-        Notif notif = new Notif().withHasRead(true);
+        Notif notif = new Notif().withHasRead(true).withReadAt(new Date());
         return notifMapper.updateByExampleSelective(notif, notifExample);
     }
 
@@ -55,5 +56,20 @@ public class NotifService {
         data.put("postId", postId);
         data.put("threadId", threadId);
         return createNotif(new Notif().withUid(ownerUid).withSenderUid(senderUid).withType(1).withData(data));
+    }
+
+    public boolean createNewPostOnThreadNotif(Integer threadId, Integer postId, String ownerUid, String senderUid) {
+        var data = new HashMap<String, Object>();
+        data.put("threadId", threadId);
+        data.put("postId", postId);
+        return createNotif(new Notif().withUid(ownerUid).withSenderUid(senderUid).withType(2).withData(data));
+    }
+
+    public boolean createNewReplyOnPostNotif(Integer threadId, Integer postId, Integer replyPostId, String ownerUid, String senderUid) {
+        var data = new HashMap<String, Object>();
+        data.put("threadId", threadId);
+        data.put("postId", postId);
+        data.put("replyPostId", replyPostId);
+        return createNotif(new Notif().withUid(ownerUid).withSenderUid(senderUid).withType(3).withData(data));
     }
 }
