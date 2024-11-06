@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-
 @Service
 public class ThreadService {
     private final ThreadMapper threadMapper;
@@ -25,8 +24,8 @@ public class ThreadService {
 
     @Autowired
     public ThreadService(ThreadMapper threadMapper, ThreadExtMapper threadExtMapper,
-                         PostMapper postMapper, LikedThreadMapper likedThreadMapper,
-                         @Qualifier("orderingStrList") String[] orderStr) {
+            PostMapper postMapper, LikedThreadMapper likedThreadMapper,
+            @Qualifier("orderingStrList") String[] orderStr) {
         this.threadMapper = threadMapper;
         this.threadExtMapper = threadExtMapper;
         this.postMapper = postMapper;
@@ -73,68 +72,118 @@ public class ThreadService {
         return threadExtMapper.changePostsNo(id, amount) == 1;
     }
 
+    /**
+     * @return true if the like is successful, false if the user has already liked
+     *         the thread
+     */
     @Transactional
     public boolean upvote(int threadId, String uid) {
         int amount = 1;
         final LikedThreadExample likedThreadExample = new LikedThreadExample();
         likedThreadExample.createCriteria().andThreadIdEqualTo(threadId).andUidEqualTo(uid);
         var oldLike = likedThreadMapper.selectByExample(likedThreadExample);
+
+        // The user has already reacted to the thread
         if (oldLike.size() >= 1) {
             var likedThread = oldLike.get(0);
+            // The user disliked the thread
             if (!likedThread.getLiked()) {
                 amount = 2;
                 likedThread.setLiked(true);
                 likedThread.setCreateAt(new Date());
-                likedThreadMapper.updateByPrimaryKeySelective(likedThread);
+                int result = likedThreadMapper.updateByPrimaryKeySelective(likedThread);
+                if (result != 1) {
+                    throw new RuntimeException("likedThreadMapper.updateByPrimaryKeySelective returned " + result);
+                }
             } else {
+                // The user has already liked the thread
                 amount = 0;
+                return false;
             }
+
+            // The user has not reacted to the thread
         } else {
-            likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
+            int result = likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
                     .withUid(uid).withLiked(true).withCreateAt(new Date()));
+            if (result != 1) {
+                throw new RuntimeException("likedThreadMapper.insertSelective returned " + result);
+            }
         }
-        return threadExtMapper.changeVote(threadId, amount) == 1;
+        int result = threadExtMapper.changeVote(threadId, amount);
+        if (result != 1) {
+            throw new RuntimeException("threadExtMapper.changeVote returned " + result);
+        }
+        return true;
     }
 
+    /**
+     * @return true if the downvote is successful, false if the user has already
+     *         downvoted
+     */
     @Transactional
     public boolean downvote(int threadId, String uid) {
         int amount = -1;
         final LikedThreadExample likedThreadExample = new LikedThreadExample();
         likedThreadExample.createCriteria().andThreadIdEqualTo(threadId).andUidEqualTo(uid);
         var oldLike = likedThreadMapper.selectByExample(likedThreadExample);
+
+        // The user has already reacted to the thread
         if (oldLike.size() >= 1) {
             var likedThread = oldLike.get(0);
+            // The user liked the thread
             if (likedThread.getLiked()) {
                 amount = -2;
                 likedThread.setLiked(false);
                 likedThread.setCreateAt(new Date());
-                likedThreadMapper.updateByPrimaryKeySelective(likedThread);
+                int result = likedThreadMapper.updateByPrimaryKeySelective(likedThread);
+                if (result != 1) {
+                    throw new RuntimeException("likedThreadMapper.updateByPrimaryKeySelective returned " + result);
+                }
             } else {
+                // The user has already disliked the thread
                 amount = 0;
+                return false;
             }
+
+            // The user has not reacted to the thread
         } else {
-            likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
+            int result = likedThreadMapper.insertSelective(new LikedThread().withThreadId(threadId)
                     .withUid(uid).withLiked(false).withCreateAt(new Date()));
+            if (result != 1) {
+                throw new RuntimeException("likedThreadMapper.insertSelective returned " + result);
+            }
         }
-        return threadExtMapper.changeVote(threadId, amount) == 1;
+        int result = threadExtMapper.changeVote(threadId, amount);
+        if (result != 1) {
+            throw new RuntimeException("threadExtMapper.changeVote returned " + result);
+        }
+        return true;
     }
 
+    /**
+     * @return true if the vote is cancelled, false if the user has not voted
+     */
     @Transactional
     public boolean cancelVote(int threadId, String uid) {
         final LikedThreadExample likedThreadExample = new LikedThreadExample();
         likedThreadExample.createCriteria().andThreadIdEqualTo(threadId).andUidEqualTo(uid);
         var oldLike = likedThreadMapper.selectByExample(likedThreadExample);
+
         if (oldLike.size() >= 1) {
             var likedThread = oldLike.get(0);
-            likedThreadMapper.deleteByPrimaryKey(likedThread.getId());
-            if (likedThread.getLiked()) {
-                return threadExtMapper.changeVote(threadId, -1) == 1;
-            } else {
-                return threadExtMapper.changeVote(threadId, 1) == 1;
+            int result = likedThreadMapper.deleteByPrimaryKey(likedThread.getId());
+            if (result != 1) {
+                throw new RuntimeException("likedThreadMapper.deleteByPrimaryKey returned " + result);
             }
-        } else {
+
+            int amount = likedThread.getLiked() ? -1 : 1;
+            result = threadExtMapper.changeVote(threadId, amount);
+            if (result != 1) {
+                throw new RuntimeException("threadExtMapper.changeVote returned " + result);
+            }
             return true;
         }
+        return false;
     }
 
     public boolean toggleDigest(int id) {

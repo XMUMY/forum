@@ -180,14 +180,15 @@ public abstract class ThreadController extends NotifController {
     public void likeThread(ThreadGrpcApi.LikeThreadReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.getUid();
         if (request.getLike() > 0) {
-            if (!threadService.upvote(request.getThreadId(), uid))
-                throw new RuntimeException("threadService.upvote returned false");
+            if (threadService.upvote(request.getThreadId(), uid)) {
+                // Like successfully, send notif
+                Thread thread = threadService.getById(request.getThreadId());
+                notifService.createThreadLikeNotif(thread.getId(), thread.getUid(), uid);
+            }
         } else if (request.getLike() == 0) {
-            if (!threadService.cancelVote(request.getThreadId(), uid))
-                throw new RuntimeException("threadService.cancleVote returned false");
+            threadService.cancelVote(request.getThreadId(), uid);
         } else {
-            if (!threadService.downvote(request.getThreadId(), uid))
-                throw new RuntimeException("threadService.downvote returned false");
+            threadService.downvote(request.getThreadId(), uid);
         }
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
