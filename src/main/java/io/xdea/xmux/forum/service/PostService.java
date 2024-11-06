@@ -23,7 +23,8 @@ public class PostService {
 
     @Autowired
     public PostService(PostMapper postMapper, PostExtMapper postExtMapper,
-                       LikedPostMapper likedPostMapper, ThreadService threadService, @Qualifier("orderingStrList") String[] orderStr) {
+            LikedPostMapper likedPostMapper, ThreadService threadService,
+            @Qualifier("orderingStrList") String[] orderStr) {
         this.postMapper = postMapper;
         this.postExtMapper = postExtMapper;
         this.likedPostMapper = likedPostMapper;
@@ -75,67 +76,126 @@ public class PostService {
         return postExtMapper.selectSaved(count, offset, uid);
     }
 
+    /**
+     * @return true if the like is successful, false if the user has already liked
+     *         the post
+     */
     @Transactional
     public boolean upvote(int postId, String uid) {
         int amount = 1;
         final LikedPostExample likedPostExample = new LikedPostExample();
         likedPostExample.createCriteria().andPostIdEqualTo(postId).andUidEqualTo(uid);
         var oldLike = likedPostMapper.selectByExample(likedPostExample);
+
+        // The user has already reacted to the post
         if (oldLike.size() >= 1) {
             var likedPost = oldLike.get(0);
+            // The user disliked the post
             if (!likedPost.getLiked()) {
                 amount = 2;
                 likedPost.setLiked(true);
                 likedPost.setCreateAt(new Date());
-                likedPostMapper.updateByPrimaryKeySelective(likedPost);
+                int result = likedPostMapper.updateByPrimaryKeySelective(likedPost);
+                if (result != 1) {
+                    throw new RuntimeException("likedPostMapper.updateByPrimaryKeySelective returned " + result);
+                }
+
             } else {
+                // The user has already liked the post
                 amount = 0;
+                return false;
             }
+
+            // The user has not reacted to the post
         } else {
-            likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
+            int result = likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
                     .withUid(uid).withLiked(true).withCreateAt(new Date()));
+            if (result != 1) {
+                throw new RuntimeException("likedPostMapper.insertSelective returned " + result);
+            }
         }
-        return postExtMapper.changeVote(postId, amount) == 1;
+        int result = postExtMapper.changeVote(postId, amount);
+        if (result != 1) {
+            throw new RuntimeException("postExtMapper.changeVote returned " + result);
+        }
+        return true;
     }
 
+    /**
+     * @return true if the downvote is successful, false if the user has already
+     *         disliked the post
+     */
     @Transactional
     public boolean downvote(int postId, String uid) {
         int amount = -1;
         final LikedPostExample likedPostExample = new LikedPostExample();
         likedPostExample.createCriteria().andPostIdEqualTo(postId).andUidEqualTo(uid);
         var oldLike = likedPostMapper.selectByExample(likedPostExample);
+
+        // The user has already reacted to the post
         if (oldLike.size() >= 1) {
             var likedPost = oldLike.get(0);
+            // The user liked the post
             if (likedPost.getLiked()) {
                 amount = -2;
-                likedPost.setLiked(true);
+                likedPost.setLiked(false);
                 likedPost.setCreateAt(new Date());
-                likedPostMapper.updateByPrimaryKeySelective(likedPost);
+                int result = likedPostMapper.updateByPrimaryKeySelective(likedPost);
+                if (result != 1) {
+                    throw new RuntimeException("likedPostMapper.updateByPrimaryKeySelective returned " + result);
+                }
             } else {
+                // The user has already disliked the post
                 amount = 0;
+                return false;
             }
+
+            // The user has not reacted to the post
         } else {
-            likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
-                    .withUid(uid).withLiked(true).withCreateAt(new Date()));
+            int result = likedPostMapper.insertSelective(new LikedPost().withPostId(postId)
+                    .withUid(uid).withLiked(false).withCreateAt(new Date()));
+            if (result != 1) {
+                throw new RuntimeException("likedPostMapper.insertSelective returned " + result);
+            }
         }
-        return postExtMapper.changeVote(postId, amount) == 1;
+        int result = postExtMapper.changeVote(postId, amount);
+        if (result != 1) {
+            throw new RuntimeException("postExtMapper.changeVote returned " + result);
+        }
+        return true;
     }
 
+    /**
+     * @return true if the cancel is successful, false if the user has not
+     *         reacted to the post
+     */
     @Transactional
     public boolean cancelVote(int postId, String uid) {
         final LikedPostExample likedPostExample = new LikedPostExample();
         likedPostExample.createCriteria().andPostIdEqualTo(postId).andUidEqualTo(uid);
         var oldLike = likedPostMapper.selectByExample(likedPostExample);
+
         if (oldLike.size() >= 1) {
             var likedPost = oldLike.get(0);
-            likedPostMapper.deleteByPrimaryKey(likedPost.getId());
-            if (likedPost.getLiked()) {
-                return postExtMapper.changeVote(postId, -1) == 1;
-            } else {
-                return postExtMapper.changeVote(postId, 1) == 1;
+            int result = likedPostMapper.deleteByPrimaryKey(likedPost.getId());
+            if (result != 1) {
+                throw new RuntimeException("likedPostMapper.deleteByPrimaryKey returned " + result);
             }
-        } else {
+
+            if (likedPost.getLiked()) {
+                result = postExtMapper.changeVote(postId, -1);
+                if (result != 1) {
+                    throw new RuntimeException("postExtMapper.changeVote returned " + result);
+                }
+            } else {
+                result = postExtMapper.changeVote(postId, 1);
+                if (result != 1) {
+                    throw new RuntimeException("postExtMapper.changeVote returned " + result);
+                }
+            }
             return true;
+        } else {
+            return false;
         }
     }
 

@@ -8,6 +8,7 @@ import io.xdea.xmux.forum.model.NotifWithContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -39,7 +40,20 @@ public class NotifService {
         return notifMapper.updateByExampleSelective(notif, notifExample);
     }
 
-    public boolean createNotif(Notif notif) {
+    private boolean createNotif(Notif notif) {
         return notifMapper.insertSelective(notif) == 1;
+    }
+
+    public boolean createThreadLikeNotif(Integer threadId, String ownerUid, String senderUid) {
+        var data = new HashMap<String, Object>();
+        data.put("threadId", threadId);
+        return createNotif(new Notif().withUid(ownerUid).withSenderUid(senderUid).withType(0).withData(data));
+    }
+
+    public boolean createPostLikeNotif(Integer postId, Integer threadId, String ownerUid, String senderUid) {
+        var data = new HashMap<String, Object>();
+        data.put("postId", postId);
+        data.put("threadId", threadId);
+        return createNotif(new Notif().withUid(ownerUid).withSenderUid(senderUid).withType(1).withData(data));
     }
 }

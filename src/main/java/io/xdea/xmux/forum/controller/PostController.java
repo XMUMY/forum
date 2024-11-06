@@ -142,15 +142,19 @@ public abstract class PostController extends ThreadController {
     public void likePost(PostGrpcApi.LikePostReq request, StreamObserver<Empty> responseObserver) {
         String uid = AuthInterceptor.getUid();
         if (request.getLike() > 0) {
-            if (!postService.upvote(request.getPostId(), uid))
-                throw new RuntimeException("postService.upvote returned false");
+            if (postService.upvote(request.getPostId(), uid)) {
+                // Like successfully, send notif
+                Post post = postService.getById(request.getPostId());
+                notifService.createPostLikeNotif(post.getId(), post.getThreadId(), post.getUid(), uid);
+            }
+
         } else if (request.getLike() == 0) {
-            if (!postService.cancelVote(request.getPostId(), uid))
-                throw new RuntimeException("postService.cancleVote returned false");
+            postService.cancelVote(request.getPostId(), uid);
+
         } else {
-            if (!postService.downvote(request.getPostId(), uid))
-                throw new RuntimeException("postService.downvote returned false");
+            postService.downvote(request.getPostId(), uid);
         }
+
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
