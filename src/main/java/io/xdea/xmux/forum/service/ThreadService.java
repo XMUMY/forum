@@ -51,17 +51,26 @@ public class ThreadService {
     }
 
     /**
-     * Hard remove thread and all its posts
+     * Soft remove thread and all its posts by setting their status to deleted
      *
      * @param id thread id
-     * @return thread removed or not
+     * @return true if thread and posts were successfully marked as deleted
      */
     @Transactional
-    public boolean hardRemove(int id) {
-        final PostExample postExample = new PostExample();
+    public boolean softRemove(int id) {
+        // Set thread status to deleted
+        Thread thread = new Thread();
+        thread.setId(id);
+        thread.setStatus(1); // 1 = deleted
+        
+        // Set all associated posts status to deleted
+        Post post = new Post();
+        post.setStatus(1); // 1 = deleted
+        PostExample postExample = new PostExample();
         postExample.createCriteria().andThreadIdEqualTo(id);
-        postMapper.deleteByExample(postExample);
-        return threadMapper.deleteByPrimaryKey(id) == 1;
+        
+        postMapper.updateByExampleSelective(post, postExample);
+        return threadMapper.updateByPrimaryKeySelective(thread) == 1;
     }
 
     public boolean renewUpdateTime(int id) {

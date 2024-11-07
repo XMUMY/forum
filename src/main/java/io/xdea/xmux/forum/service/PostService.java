@@ -46,14 +46,34 @@ public class PostService {
         return postMapper.selectByPrimaryKey(postId);
     }
 
+    /**
+     * Soft remove post and all its children by setting their status to deleted
+     *
+     * @param postId post id
+     * @param postThreadId thread id
+     * @return true if the post and its children were successfully marked as deleted
+     */
     @Transactional
-    public boolean hardRemove(int postId, int postThreadId) {
+    public boolean softRemove(int postId, int postThreadId) {
+        // Update status to deleted (1) for the post and all its children
         final PostExample postExample = new PostExample();
         postExample.createCriteria().andParentIdEqualTo(postId);
-        final int deleteNo = postMapper.deleteByExample(postExample);
-        final int selfDelNo = postMapper.deleteByPrimaryKey(postId);
-        threadService.changePostsNo(postThreadId, -(deleteNo + selfDelNo));
-        return selfDelNo == 1;
+        
+        Post updatePost = new Post();
+        updatePost.setStatus(1); // Set status to deleted
+        
+        // Update children posts
+        int updateNo = postMapper.updateByExampleSelective(updatePost, postExample);
+        
+        // Update the main post
+        updatePost.setId(postId);
+        int selfUpdateNo = postMapper.updateByPrimaryKeySelective(updatePost);
+
+        if (!threadService.changePostsNo(postThreadId, -(updateNo + selfUpdateNo))) {
+            throw new RuntimeException("threadService.changePostsNo returned false");
+        };
+        
+        return selfUpdateNo == 1;
     }
 
     public List<PostWithInfo> get(int offset, int count, Integer threadId, String uid, int orderMethod) {

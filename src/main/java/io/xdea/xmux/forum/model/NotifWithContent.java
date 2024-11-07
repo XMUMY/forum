@@ -1,6 +1,6 @@
 package io.xdea.xmux.forum.model;
 
-public class NotifWithContent  extends Notif{
+public class NotifWithContent extends Notif {
     private String refContent;
     private String objContent;
 

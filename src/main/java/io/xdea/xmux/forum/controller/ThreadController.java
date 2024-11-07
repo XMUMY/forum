@@ -146,9 +146,9 @@ public abstract class ThreadController extends NotifController {
             return;
         }
 
-        // Check passed, remove thread and all its posts
-        if (!threadService.hardRemove(request.getThreadId()))
-            throw new RuntimeException("threadService.hardRemove returned false");
+        // Check passed, soft remove the thread
+        if (!threadService.softRemove(request.getThreadId()))
+            throw new RuntimeException("threadService.softRemove returned false");
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();

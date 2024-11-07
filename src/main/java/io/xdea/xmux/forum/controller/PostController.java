@@ -206,9 +206,9 @@ public abstract class PostController extends ThreadController {
             return;
         }
 
-        // Remove post and also its children
-        if (!postService.hardRemove(request.getPostId(), post.getThreadId()))
-            throw new RuntimeException("postService.hardRemove returned false");
+        // Soft remove post and its children
+        if (!postService.softRemove(request.getPostId(), post.getThreadId()))
+            throw new RuntimeException("postService.softRemove returned false");
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
