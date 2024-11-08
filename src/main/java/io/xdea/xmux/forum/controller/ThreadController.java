@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public abstract class ThreadController extends NotifController {
 
     protected final ThreadService threadService;
@@ -156,6 +158,11 @@ public abstract class ThreadController extends NotifController {
 
     @Override
     public void updateThread(ThreadGrpcApi.UpdateThreadReq request, StreamObserver<Empty> responseObserver) {
+        if (StringUtils.isAnyBlank(request.getTitle(), request.getBody())) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("error.content_empty").asException());
+            return;
+        }
         if (!threadService.update(request.getId(), request.getTitle(), request.getBody()))
             throw new RuntimeException("threadService.update returned false");
         responseObserver.onNext(Empty.getDefaultInstance());

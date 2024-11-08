@@ -204,10 +204,19 @@ public class ThreadService {
     }
 
     public boolean update(int id, String title, String body) {
-        // TODO: fix update api
-        final Date nowTime = new Date();
-        return threadMapper.updateByPrimaryKeySelective(new Thread()
-                .withId(id).withTitle(title)
-                .withUpdateAt(nowTime).withLastUpdate(nowTime)) == 1;
+        // Fetch the old thread
+        Thread oldThread = threadMapper.selectByPrimaryKey(id);
+        if (oldThread == null) {
+            return false;
+        }
+        if (oldThread.getStatus() == 1) {
+            return false;
+        }
+
+        // Update the thread
+        oldThread.setTitle(title);
+        oldThread.getBody().put("content", body);
+        oldThread.setUpdateAt(new Date());
+        return threadMapper.updateByPrimaryKeySelective(oldThread) == 1;
     }
 }

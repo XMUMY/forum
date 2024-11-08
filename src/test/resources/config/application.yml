@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_ADDR}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false
+    schemas: forum
