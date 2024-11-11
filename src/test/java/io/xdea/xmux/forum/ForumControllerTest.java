@@ -3,13 +3,12 @@ package io.xdea.xmux.forum;
 import io.grpc.stub.StreamObserver;
 import io.xdea.xmux.forum.controller.ForumController;
 import io.xdea.xmux.forum.dto.ForumGrpcApi;
-import io.xdea.xmux.forum.interceptor.AuthInterceptor;
 
 
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,12 +48,9 @@ public class ForumControllerTest {
         );
     }
 
-    @BeforeEach
-    void setup() {
-        // Mock the AuthInterceptor to return our test UID
-        try (MockedStatic<AuthInterceptor> mockedStatic = Mockito.mockStatic(AuthInterceptor.class)) {
-            mockedStatic.when(AuthInterceptor::getUid).thenReturn(TEST_UID);
-        }
+    @AfterAll
+    public static void cleanUpDatabase(@Autowired Flyway flyway) {
+        flyway.clean();
     }
 
     @Test
@@ -117,7 +113,7 @@ public class ForumControllerTest {
             .build();
         
         ForumGrpcApi.GetForumsReq secondPageRequest = ForumGrpcApi.GetForumsReq.newBuilder()
-            .setFrom(2)
+            .setFrom(1)
             .setCount(2)
             .build();
 

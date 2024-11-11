@@ -2,32 +2,44 @@ package io.xdea.xmux.forum;
 
 import com.google.protobuf.Empty;
 import io.grpc.Status;
+import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
 import io.xdea.xmux.forum.controller.ThreadController;
 import io.xdea.xmux.forum.dto.CommonGrpcApi;
 import io.xdea.xmux.forum.dto.ThreadGrpcApi;
-import io.xdea.xmux.forum.interceptor.AuthInterceptor;
+
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ThreadControllerTest {
 
     @Autowired
@@ -40,7 +52,15 @@ public class ThreadControllerTest {
     private JdbcTemplate jdbcTemplate;
 
     @BeforeAll
-    static void setupTestData(@Autowired JdbcTemplate jdbcTemplate) {
+    static void setupTestData(@Autowired JdbcTemplate jdbcTemplate, @Autowired Flyway flyway) {
+        flyway.migrate();
+
+        // Insert test forums that will be used by both forum and thread tests
+        String sql = """
+            INSERT INTO forum.forum (title, description, create_at, creator_uid)
+            VALUES ('General Discussion', 'Forum for general topics', ?, ?)""";
+
+        jdbcTemplate.update(sql, Timestamp.from(Instant.now()), TEST_UID);
 
         TEST_FORUM_ID = jdbcTemplate.queryForObject(
                 "SELECT id FROM forum.forum WHERE title = 'General Discussion'",
@@ -69,10 +89,22 @@ public class ThreadControllerTest {
 
     @BeforeEach
     void setup() {
-        // Mock the AuthInterceptor to return our test UID
-        try (MockedStatic<AuthInterceptor> mockedStatic = Mockito.mockStatic(AuthInterceptor.class)) {
-            mockedStatic.when(AuthInterceptor::getUid).thenReturn(TEST_UID);
-        }
+        // Set up Spring Security authentication context
+        User user = new User(TEST_UID, "", Collections.emptyList());
+        UsernamePasswordAuthenticationToken auth = 
+            UsernamePasswordAuthenticationToken.authenticated(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    void cleanup() {
+        // Clear the security context after each test
+        SecurityContextHolder.clearContext();
+    }
+
+    @AfterAll
+    static void cleanUpDatabase(@Autowired Flyway flyway) {
+        flyway.clean();
     }
 
     @Test
@@ -161,17 +193,17 @@ public class ThreadControllerTest {
 
         // Verify first thread details
         ThreadGrpcApi.Thread firstThread = threads.get(0);
-        assertEquals("First Thread", firstThread.getTitle());
+        assertEquals("Test Thread", firstThread.getTitle());
         assertEquals(ThreadGrpcApi.Thread.BodyCase.MARKDOWNCONTENT, firstThread.getBodyCase());
-        assertEquals("Test content 1", firstThread.getMarkdownContent().getContent());
+        assertEquals("This is a test thread content", firstThread.getMarkdownContent().getContent());
         assertEquals(TEST_UID, firstThread.getUid());
         assertEquals(0, firstThread.getLikes());
         assertEquals(0, firstThread.getPosts());
         assertFalse(firstThread.getPinned());
         assertFalse(firstThread.getDigest());
 
-        // Verify fourth thread details
-        ThreadGrpcApi.Thread fourthThread = threads.get(3);
+        // Verify second thread details
+        ThreadGrpcApi.Thread fourthThread = threads.get(1);
         assertEquals("Test Thread 4", fourthThread.getTitle());
         assertEquals(ThreadGrpcApi.Thread.BodyCase.PLAINCONTENT, fourthThread.getBodyCase());
         assertEquals("This is a test thread content", fourthThread.getPlainContent().getContent());
@@ -302,6 +334,7 @@ public class ThreadControllerTest {
                 .setLike(0)  // 0 for unlike
                 .build();
 
+        responseObserver = mock(StreamObserver.class);
         threadController.likeThread(unlikeRequest, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -321,6 +354,7 @@ public class ThreadControllerTest {
                 .setLike(-1)
                 .build();
 
+        responseObserver = mock(StreamObserver.class);
         threadController.likeThread(dislikeRequest, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -335,6 +369,7 @@ public class ThreadControllerTest {
         assertEquals(-1, likes);
 
         // Test like the thread again
+        responseObserver = mock(StreamObserver.class);
         threadController.likeThread(likeRequest, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -349,6 +384,7 @@ public class ThreadControllerTest {
         assertEquals(1, likes);
 
         // Test dislike the thread, then unlike it
+        responseObserver = mock(StreamObserver.class);
         threadController.likeThread(dislikeRequest, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -362,6 +398,7 @@ public class ThreadControllerTest {
         );
         assertEquals(-1, likes);
 
+        responseObserver = mock(StreamObserver.class);
         threadController.likeThread(unlikeRequest, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -408,6 +445,7 @@ public class ThreadControllerTest {
         assertTrue(isPinned);
 
         // Test unpinning the thread
+        responseObserver = mock(StreamObserver.class);
         threadController.pinThread(request, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -454,6 +492,7 @@ public class ThreadControllerTest {
         assertTrue(isDigest);
 
         // Test unmarking the thread as digest
+        responseObserver = mock(StreamObserver.class);
         threadController.digestThread(request, responseObserver);
         // Verify the response
         Mockito.verify(responseObserver).onNext(Empty.getDefaultInstance());
@@ -501,7 +540,9 @@ public class ThreadControllerTest {
                 threadId
         );
         String updatedTitle = (String) result.get("title");
-        String updatedBody = (String) result.get("body");
+        // Cast to PGobject and get string value for JSON
+        PGobject jsonObject = (PGobject) result.get("body");
+        String updatedBody = jsonObject.getValue();
         assertEquals(newTitle, updatedTitle);
         assertEquals("{\"content\":\"" + newBody + "\"}", updatedBody);
 
@@ -512,11 +553,15 @@ public class ThreadControllerTest {
                 .setBody("Empty title")
                 .build();
 
+        responseObserver = mock(StreamObserver.class);
         threadController.updateThread(request, responseObserver);
 
         // Verify the response
-        Mockito.verify(responseObserver).onError(Status.INVALID_ARGUMENT
-                .withDescription("error.content_empty").asException());
+        Mockito.verify(responseObserver).onError(argThat(throwable -> {
+            StatusException statusException = (StatusException) throwable;
+            return Status.INVALID_ARGUMENT.getCode().equals(statusException.getStatus().getCode()) &&
+                    "error.content_empty".equals(statusException.getStatus().getDescription());
+        }));
 
         // Verify thread was not updated
         result = jdbcTemplate.queryForMap(
@@ -524,9 +569,11 @@ public class ThreadControllerTest {
                 threadId
         );
         updatedTitle = (String) result.get("title");
-        updatedBody = (String) result.get("body");
+        // Cast to PGobject and get string value for JSON
+        jsonObject = (PGobject) result.get("body");
+        updatedBody = jsonObject.getValue();
         assertEquals(newTitle, updatedTitle);
-        assertEquals("{\"content\": \"" + newBody + "\"}", updatedBody);
+        assertEquals("{\"content\":\"" + newBody + "\"}", updatedBody);
 
         // Test updating the thread with empty body
         request = ThreadGrpcApi.UpdateThreadReq.newBuilder()
@@ -535,11 +582,15 @@ public class ThreadControllerTest {
                 .setBody("")
                 .build();
 
+        responseObserver = mock(StreamObserver.class);
         threadController.updateThread(request, responseObserver);
 
         // Verify the response
-        Mockito.verify(responseObserver).onError(Status.INVALID_ARGUMENT
-                .withDescription("error.content_empty").asException());
+        Mockito.verify(responseObserver).onError(argThat(throwable -> {
+            StatusException statusException = (StatusException) throwable;
+            return Status.INVALID_ARGUMENT.getCode().equals(statusException.getStatus().getCode()) &&
+                    "error.content_empty".equals(statusException.getStatus().getDescription());
+        }));
 
         // Verify thread was not updated
         result = jdbcTemplate.queryForMap(
@@ -547,8 +598,11 @@ public class ThreadControllerTest {
                 threadId
         );
         updatedTitle = (String) result.get("title");
-        updatedBody = (String) result.get("body");
+        // Cast to PGobject and get string value for JSON
+        jsonObject = (PGobject) result.get("body");
+        updatedBody = jsonObject.getValue();
         assertEquals(newTitle, updatedTitle);
-        assertEquals("{\"content\": \"" + newBody + "\"}", updatedBody);
+        assertEquals("{\"content\":\"" + newBody + "\"}", updatedBody);
     }
+
 } 
